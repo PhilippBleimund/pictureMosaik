@@ -13,7 +13,17 @@
   <maven.compiler.source>1.8</maven.compiler.source>
      <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <main.basedir>${project.basedir}${file.seperator}</main.basedir>
   </properties>
+
+<repositories>
+<repository>
+<id>data-local</id>
+<name>data</name>
+<url>file://${project.basedir}/local</url>
+</repository>
+</repositories>
+
 
   <dependencies>
 	<dependency>
@@ -49,11 +59,9 @@
 </dependency>
 
 <dependency>
-    <groupId>com.roufid.tutorials</groupId>
-    <artifactId>example-app</artifactId>
-    <version>1.0</version>
-    <scope>system</scope>
-    <systemPath>C:\Users\Philipp Bleimund\Documents\Java\lib\json-simple-1.1.1.jar</systemPath>
+    <groupId>com</groupId>
+    <artifactId>json-simple</artifactId>
+    <version>1.1.1</version>
 </dependency>
 	
 	<dependency>

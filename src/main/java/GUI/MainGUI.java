@@ -358,7 +358,7 @@ public class MainGUI {
 	        			switch(s) {
 	        			case SPLITTER:
 	        				progressBar.setValue(0);
-	        				progressBar.setString("Image gets splitted");
+	        				progressBar.setString("Image gets splited");
 	        				break;
 	        			case AVERAGE_COLOR_PICTURE:
 	        				progressBar.setValue(14);

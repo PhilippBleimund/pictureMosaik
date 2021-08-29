@@ -64,7 +64,7 @@ public class Renderer extends SwingWorker{
 		DONE
 	}
 	
-	private void nodifyListener(Renderer.Status s) {
+	private void notifyListener(Renderer.Status s) {
 		for(ProgressBarListener L : Listeners) {
 			L.changeProgressBarStatus(s);
 		}
@@ -78,17 +78,18 @@ public class Renderer extends SwingWorker{
 		SplitPicture splitter = new SplitPicture();
         BufferedImage[][] biArr;
         
-        nodifyListener(Status.SPLITTER);
+        notifyListener(Status.SPLITTER);
+        
         biArr = splitter.SpitPictureAndSave(imageData);
         
         
         computeAverageColor colorCalculator = new computeAverageColor();
         
-        nodifyListener(Status.AVERAGE_COLOR_PICTURE);
+        notifyListener(Status.AVERAGE_COLOR_PICTURE);
         Color[][] averageColorSections = colorCalculator.computeAverageColorSections(biArr);
         
         if(FolderData.selectedImages != null) {
-        	nodifyListener(Status.AVERAGE_COLOR_FILES);
+        	notifyListener(Status.AVERAGE_COLOR_FILES);
         	Color[] averageColorFiles = colorCalculator.computeAverageColorFiles(FolderData.selectedImages, calculateAverage.ScalrToThis(method));
         	
         	DatabaseObj Obj = new DatabaseObj(FolderData.selectedImages, averageColorFiles);
@@ -96,30 +97,30 @@ public class Renderer extends SwingWorker{
         }
 		
 		DatabaseObj[] DatabaseArray = new DatabaseObj[FolderData.selectedDatabasesList.size()];
-		nodifyListener(Status.DATABASE_MERGE);
+		notifyListener(Status.DATABASE_MERGE);
 		FolderData.selectedDatabasesList.toArray(DatabaseArray);
 		
 		compareColor compare = new compareColor();
-		nodifyListener(Status.COMPUTATION);
+		notifyListener(Status.COMPUTATION);
         File[][] choosen = compare.compare(averageColorSections, DatabaseArray,  maxRepetition);
         
         ScaledImages AllImages;
         
         downrenderFiles downrenderChoosen = new downrenderFiles();
-        nodifyListener(Status.DOWNRENDER_IMAGES);
+        notifyListener(Status.DOWNRENDER_IMAGES);
         AllImages = downrenderChoosen.downrenderFilesAndSave(choosen, imageData, method);
         
         System.out.println("downrender");
         
         mergeMosaik merger = new mergeMosaik();
-        nodifyListener(Status.MERGE_IMAGES);
+        notifyListener(Status.MERGE_IMAGES);
         merger.mergeMosaikAndSave(AllImages, imageData, choosen);
         
         long timer2 = System.nanoTime();
         
         System.out.println("Zeit in Nanosekunden: "+ (timer2 - timer1));
         
-        nodifyListener(Status.DONE);
+        notifyListener(Status.DONE);
 		return null;
 	}
 	

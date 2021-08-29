@@ -226,10 +226,10 @@ public class downrender {
 		AffineTransform transform;
 		try {
 			image = ImageIO.read(location);
-			//information = readImageInformation(location);
-			//transform = getExifTransformation(information);
-			//BufferedImage rotatedImage = transformImage(image, transform);
-			//return rotatedImage;
+			information = readImageInformation(location);
+			transform = getExifTransformation(information);
+			BufferedImage rotatedImage = transformImage(image, transform);
+			return rotatedImage;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
