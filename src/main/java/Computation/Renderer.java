@@ -34,8 +34,6 @@ public class Renderer extends SwingWorker{
 	private splitObj imageData;
 	private FolderSave FolderData;
 	private int maxRepetition;
-	private boolean transparent;
-	private int valueTransparent;
 	private Scalr.Method method;
 	
 	private List<ProgressBarListener> Listeners = new ArrayList<ProgressBarListener>();
@@ -44,8 +42,6 @@ public class Renderer extends SwingWorker{
 		imageData = information;
 		this.FolderData = FolderData;
 		this.maxRepetition = maxRepetition;
-		this.transparent = transparent;
-		this.valueTransparent = valueTransparent;
 		this.method = method;
 	}
 	

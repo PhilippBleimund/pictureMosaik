@@ -2,6 +2,7 @@ package PictureAnalyse;
 
 import java.awt.AlphaComposite;
 import java.awt.Composite;
+import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -41,7 +42,15 @@ public class mergeMosaik {
         
         g.dispose();
         
-        ImageViewerUI viewer = new ImageViewerUI(imageData.image, combined);
-        viewer.setVisible(true);
+        EventQueue.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				ImageViewerUI viewer = new ImageViewerUI(imageData.image, combined);
+		        viewer.setVisible(true);
+			}
+        	
+        });
 	}
 }

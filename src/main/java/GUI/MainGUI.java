@@ -412,18 +412,6 @@ public class MainGUI {
 		maxRepetition_spinner.setPreferredSize(new Dimension(50, 20));
 		controlPanel.add(maxRepetition_spinner);
 		
-		originalPictureOverlay_CBox = new JCheckBox("overlay                             ");
-		originalPictureOverlay_CBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				OverlayTransparency_Slider.setVisible(!OverlayTransparency_Slider.isVisible());
-			}
-		});
-		controlPanel.add(originalPictureOverlay_CBox);
-		
-		OverlayTransparency_Slider = new JSlider();
-		OverlayTransparency_Slider.setVisible(false);
-		controlPanel.add(OverlayTransparency_Slider);
-		
 		JLabel downrenderSettings_lbl = new JLabel("downrender Settings:");
 		controlPanel.add(downrenderSettings_lbl);
 		
