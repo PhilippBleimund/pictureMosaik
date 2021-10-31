@@ -2,7 +2,6 @@ package PictureAnalyse;
 
 import java.awt.AlphaComposite;
 import java.awt.Composite;
-import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -28,7 +27,7 @@ public class mergeMosaik {
 		
 	}
 	
-	public void mergeMosaikAndSave(ScaledImages AllImages, splitObj imageData, File[][] choosen) {
+	public BufferedImage mergeMosaik(ScaledImages AllImages, splitObj imageData, File[][] choosen) {
 		BufferedImage combined = new BufferedImage(imageData.image.getWidth() * imageData.multiplier, imageData.image.getHeight() * imageData.multiplier, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = combined.createGraphics();
     	
@@ -41,16 +40,6 @@ public class mergeMosaik {
         }
         
         g.dispose();
-        
-        EventQueue.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				ImageViewerUI viewer = new ImageViewerUI(imageData.image, combined);
-		        viewer.setVisible(true);
-			}
-        	
-        });
+        return combined;
 	}
 }

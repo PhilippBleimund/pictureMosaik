@@ -20,6 +20,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -37,11 +39,13 @@ import javax.swing.filechooser.FileSystemView;
 import org.imgscalr.Scalr;
 
 import Computation.DataBaseManager;
-import Computation.ProgressBarListener;
-import Computation.Renderer;
-import Computation.Renderer.Status;
 import Computation.helper;
 import Computation.smartSplitter;
+import Listener.ProgressEvent;
+import Listener.ProgressListener;
+import Manager.RenderQueue;
+import Manager.Renderer;
+import Manager.Renderer.Status;
 import PictureAnalyse.SplitPicture;
 import PictureAnalyse.calculateAverage;
 import PictureAnalyse.compareColor;
@@ -81,12 +85,11 @@ public class MainGUI {
 	JSlider OverlayTransparency_Slider;
 	JCheckBox originalPictureOverlay_CBox;
 	smartSplitter imageSplitter;
-	JComboBox downrenderSettings_CBox;
+	JComboBox<?> downrenderSettings_CBox;
 	JProgressBar progressBar;
+	JComboBox<String> RenderQueueComboBox;
 	
 	helper helperClass = new helper();
-	private JTextField exportLocation_TField;
-	
 	
 	/**
 	 * Launch the application.
@@ -192,7 +195,6 @@ public class MainGUI {
 		JButton chooseOriginal = new JButton("choose Original");
 		chooseOriginal.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
 				JFXPanel dummy = new JFXPanel();
 				File selectedFile = null;
 				
@@ -350,49 +352,55 @@ public class MainGUI {
 	        	}
 	        	FolderData.selectedDatabasesList = Databasen;
 	        	
+	        	RenderQueue instance = RenderQueue.getInstance();
+	        	
 	        	Renderer render = new Renderer(imageData, FolderData, (int)maxRepetition_spinner.getValue(), (Scalr.Method)downrenderSettings_CBox.getSelectedItem());
-	        	render.addListener(new ProgressBarListener() {
+	        	render.addListener(new ProgressListener() {
 	        		
 	        		@Override
-	        		public void changeProgressBarStatus(Renderer.Status s) {
-	        			switch(s) {
+	        		public void changeProgressStatus(ProgressEvent e) {
+	        			Status status = e.getStatus();
+	        			short renderId = e.getRenderId();
+	        			switch(status) {
 	        			case SPLITTER:
 	        				progressBar.setValue(0);
-	        				progressBar.setString("Image gets splited");
+	        				progressBar.setString("Render #" + renderId + ": Image gets splited");
 	        				break;
 	        			case AVERAGE_COLOR_PICTURE:
 	        				progressBar.setValue(14);
-	        				progressBar.setString("average color of subsection");
+	        				progressBar.setString("Render #" + renderId + "average color of subsection");
 	        				break;
 	        			case AVERAGE_COLOR_FILES:
 	        				progressBar.setValue(28);
-	        				progressBar.setString("average color of selected images");
+	        				progressBar.setString("Render #" + renderId + "average color of selected images");
 	        				break;
 	        			case DATABASE_MERGE:
 	        				progressBar.setValue(42);
-	        				progressBar.setString("merging of databases");
+	        				progressBar.setString("Render #" + renderId + "merging of databases");
 	        				break;
 	        			case COMPUTATION:
 	        				progressBar.setValue(56);
-	        				progressBar.setString("the best combination gets calculated");
+	        				progressBar.setString("Render #" + renderId + "the best combination gets calculated");
 	        				break;
 	        			case DOWNRENDER_IMAGES:
 	        				progressBar.setValue(70);
-	        				progressBar.setString("the choosen images are rendered down");
+	        				progressBar.setString("Render #" + renderId + "the choosen images are rendered down");
 	        				break;
 	        			case MERGE_IMAGES:
 	        				progressBar.setValue(84);
-	        				progressBar.setString("the down rendered images are getting merged");
+	        				progressBar.setString("Render #" + renderId + "the down rendered images are getting merged");
 	        				break;
 	        			case DONE:
 	        				progressBar.setValue(0);
 	        				progressBar.setString(null);
+	        				RenderQueueComboBox.setModel(new DefaultComboBoxModel<String>(instance.getQueueAsArray()));
 	        				break;
 	        			}
 	        		}
 	        		
 	        	});
-	        	render.execute();
+	        	instance.addRender(render);
+	        	
 			}
 		});
 		controlPanel.add(renderStart);
@@ -487,9 +495,19 @@ public class MainGUI {
 		});
 		controlPanel.add(chooseDatabases_btn);
 		
+		JPanel ProgressBarPanel = new JPanel();
+		panel.add(ProgressBarPanel, BorderLayout.SOUTH);
+		ProgressBarPanel.setLayout(new BorderLayout(0, 0));
+		
 		progressBar = new JProgressBar();
 		progressBar.setStringPainted(true);
-		panel.add(progressBar, BorderLayout.SOUTH);
+		ProgressBarPanel.add(progressBar);
+		
+		JPanel RenderQueueRanel = new JPanel();
+		ProgressBarPanel.add(RenderQueueRanel, BorderLayout.WEST);
+		
+		RenderQueueComboBox = new JComboBox<String>(new DefaultComboBoxModel<String>(new String[] {"empty Queue"}));
+		RenderQueueRanel.add(RenderQueueComboBox);
 	}
 	
 	public void paintLines(splitObj splits) {

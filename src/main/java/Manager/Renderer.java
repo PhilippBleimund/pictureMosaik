@@ -1,23 +1,20 @@
-package Computation;
+package Manager;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
-import javax.imageio.ImageIO;
 import javax.swing.SwingWorker;
 
 import org.imgscalr.Scalr;
-import org.imgscalr.Scalr.Method;
 
+import Computation.computeAverageColor;
+import Listener.ProgressEvent;
+import Listener.ProgressListener;
 import PictureAnalyse.SplitPicture;
 import PictureAnalyse.calculateAverage;
 import PictureAnalyse.compareColor;
@@ -31,12 +28,16 @@ import saveObjects.ScaledImages;
 
 public class Renderer extends SwingWorker{
 	
+	private BufferedImage finishedRender;
+	
 	private splitObj imageData;
 	private FolderSave FolderData;
 	private int maxRepetition;
 	private Scalr.Method method;
 	
-	private List<ProgressBarListener> Listeners = new ArrayList<ProgressBarListener>();
+	private List<ProgressListener> Listeners = new ArrayList<ProgressListener>();
+	
+	private short RenderId;
 	
 	public Renderer(splitObj information, FolderSave FolderData, int maxRepetition, Scalr.Method method) {
 		imageData = information;
@@ -45,7 +46,8 @@ public class Renderer extends SwingWorker{
 		this.method = method;
 	}
 	
-	public void addListener(ProgressBarListener listener) {
+	
+	public void addListener(ProgressListener listener) {
 		Listeners.add(listener);
 	}
 	
@@ -61,8 +63,8 @@ public class Renderer extends SwingWorker{
 	}
 	
 	private void notifyListener(Renderer.Status s) {
-		for(ProgressBarListener L : Listeners) {
-			L.changeProgressBarStatus(s);
+		for(ProgressListener L : Listeners) {
+			L.changeProgressStatus(new ProgressEvent(s, this.RenderId, this));
 		}
 	}
 	
@@ -110,22 +112,36 @@ public class Renderer extends SwingWorker{
         
         mergeMosaik merger = new mergeMosaik();
         notifyListener(Status.MERGE_IMAGES);
-        merger.mergeMosaikAndSave(AllImages, imageData, choosen);
+        finishedRender = merger.mergeMosaik(AllImages, imageData, choosen);
         
         long timer2 = System.nanoTime();
         
         System.out.println("Zeit in Nanosekunden: "+ (timer2 - timer1));
-        
-        notifyListener(Status.DONE);
 		return null;
 	}
 	
-	private Object[] concatWithCollection(Object[] array1, Object[] array2) {
-	    List<Object> resultList = new ArrayList<>(array1.length + array2.length);
-	    Collections.addAll(resultList, array1);
-	    Collections.addAll(resultList, array2);
+	public void setRenderId(short RenderId) {
+		this.RenderId = RenderId;
+	}
+	
+	public short getRenderId() {
+		return this.RenderId;
+	}
 
-	    Object[] resultArray = (Object[]) Array.newInstance(array1.getClass().getComponentType(), 0);
-	    return resultList.toArray(resultArray);
+	public splitObj getImageData() {
+		return this.imageData;
+	}
+	
+	public BufferedImage getFinishedRender() {
+		if(this.isDone()) {
+			return this.finishedRender;
+		}else {
+			return null;
+		}
+	}
+	
+	@Override
+	public void done() {
+		notifyListener(Status.DONE);
 	}
 }

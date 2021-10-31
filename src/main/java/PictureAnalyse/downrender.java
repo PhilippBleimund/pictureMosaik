@@ -7,6 +7,7 @@ import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
 
@@ -169,7 +170,7 @@ public class downrender {
 	public AffineTransform getExifTransformation(ImageInformation info) {
 
 	    AffineTransform t = new AffineTransform();
-
+	    
 	    switch (info.orientation) {
 	    case 1:
 	        break;
@@ -208,17 +209,14 @@ public class downrender {
 	    return t;
 	}
 	
-	public BufferedImage transformImage(BufferedImage image, AffineTransform transform) throws Exception {
-
-	    AffineTransformOp op = new AffineTransformOp(transform, AffineTransformOp.TYPE_BICUBIC);
-
-	    BufferedImage destinationImage = op.createCompatibleDestImage(image, (image.getType() == BufferedImage.TYPE_BYTE_GRAY) ? image.getColorModel() : null );
-	    Graphics2D g = destinationImage.createGraphics();
-	    g.setBackground(Color.WHITE);
-	    g.clearRect(0, 0, destinationImage.getWidth(), destinationImage.getHeight());
-	    destinationImage = op.filter(image, destinationImage);
-	    return destinationImage;
-	}	
+	private BufferedImage transformImage(BufferedImage image, AffineTransform atx) {
+		Dimension d = new Dimension(image.getWidth(), image.getHeight());
+		   BufferedImage displayImage =
+		        new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_RGB);
+		   Graphics2D dispGc = displayImage.createGraphics();
+		   dispGc.drawImage(image, atx, null);
+		   return displayImage;
+	}
 	
 	public BufferedImage prepareImage(File location) {
 		BufferedImage image = null;
