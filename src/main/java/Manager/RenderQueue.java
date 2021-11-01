@@ -3,12 +3,15 @@ package Manager;
 import java.awt.image.BufferedImage;
 import java.awt.EventQueue;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import ImageViewer.ImageViewerUI;
 import Listener.ProgressEvent;
 import Listener.ProgressListener;
+import Listener.RenderQueueEvent;
+import Listener.RenderQueueListener;
 import Manager.Renderer.Status;
 import PictureAnalyse.splitObj;
 
@@ -21,8 +24,20 @@ public class RenderQueue {
 	
 	private short RenderCounter;
 	
+	private List<RenderQueueListener> Listeners = new ArrayList<RenderQueueListener>();
+	
 	public RenderQueue() {
 		RenderQueue = new LinkedBlockingQueue<Renderer>();
+	}
+	
+	public void addListener(RenderQueueListener listener) {
+		Listeners.add(listener);
+	}
+	
+	private void notifyListener() {
+		for(RenderQueueListener L : Listeners) {
+			L.triggerQueueUpdate(new RenderQueueEvent(true));
+		}
 	}
 	
 	public void addRender(Renderer r) {
@@ -59,6 +74,7 @@ public class RenderQueue {
 						}			        	
 			        });
 					nextRender();
+					notifyListener();
 				}
 			}
 			
@@ -69,7 +85,7 @@ public class RenderQueue {
 	
 	public String[] getQueueAsArray() {
 		String[] array;
-		if(RenderQueue.size() == 0 && (activeRender == null || activeRender.isDone())) {
+ 		if(RenderQueue.size() == 0 && (activeRender == null || activeRender.isDone())) {
 			array = new String[1];
 			array[0] = "empty queue";
 		}else {

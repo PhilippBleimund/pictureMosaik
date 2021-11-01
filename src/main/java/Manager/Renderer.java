@@ -45,12 +45,7 @@ public class Renderer extends SwingWorker{
 		this.maxRepetition = maxRepetition;
 		this.method = method;
 	}
-	
-	
-	public void addListener(ProgressListener listener) {
-		Listeners.add(listener);
-	}
-	
+		
 	public enum Status{
 		SPLITTER,
 		AVERAGE_COLOR_PICTURE,
@@ -60,6 +55,10 @@ public class Renderer extends SwingWorker{
 		DOWNRENDER_IMAGES,
 		MERGE_IMAGES,
 		DONE
+	}
+	
+	public void addListener(ProgressListener listener) {
+		Listeners.add(listener);
 	}
 	
 	private void notifyListener(Renderer.Status s) {

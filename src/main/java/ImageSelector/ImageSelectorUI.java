@@ -8,6 +8,7 @@ import java.awt.BorderLayout;
 import javax.swing.JTabbedPane;
 
 import GUI.SynchronousJFXFileChooser;
+import ImageSelector.FolderTree.FolderTreeManager;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.stage.FileChooser;
@@ -19,12 +20,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.awt.event.ActionEvent;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.JList;
+import net.miginfocom.swing.MigLayout;
 
 public class ImageSelectorUI {
 
 	private JFrame frame;
-
-	private JTabbedPane tabbedPane;
 	/**
 	 * Launch the application.
 	 */
@@ -60,49 +64,35 @@ public class ImageSelectorUI {
 		frame.getContentPane().add(panel, BorderLayout.CENTER);
 		panel.setLayout(new BorderLayout(0, 0));
 		
-		JPanel panel_1 = new JPanel();
-		panel.add(panel_1, BorderLayout.WEST);
+		JPanel choose_pnl = new JPanel();
+		panel.add(choose_pnl, BorderLayout.WEST);
+		choose_pnl.setLayout(new MigLayout("", "[]", "[][][][][][][][][][][][][][][][][][][][][]"));
 		
-		JButton btnNewButton = new JButton("New button");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JFXPanel dummy = new JFXPanel();
-				List<File> selectedFilesList = null;
-				File[] Files;
-				
-		        Platform.setImplicitExit(false);
-		        try {
-		            SynchronousJFXFileChooser chooser = new SynchronousJFXFileChooser(() -> {
-		                FileChooser ch = new FileChooser();
-		                ch.setTitle("Open any file you wish");
-		                ch.getExtensionFilters().addAll(
-		                	     new FileChooser.ExtensionFilter("PNG", "*.png")
-		                	    ,new FileChooser.ExtensionFilter("JPG", "*.jpg")
-		                	    ,new FileChooser.ExtensionFilter("ALL", new ArrayList<String>(Arrays.asList("*.png", "*.jpg")))
-		                	);
-		                return ch;
-		            });
-		            selectedFilesList = chooser.showOpenMultipleDialog();
-		            // this will throw an exception:
-		            //chooser.showDialog(ch -> ch.showOpenDialog(null), 1, TimeUnit.NANOSECONDS);
-		        } finally {
-		        	if(selectedFilesList.size() > 0) {
-		        		System.out.println("hehe");
-		        		Files = new File[selectedFilesList.size()];
-			        	selectedFilesList.toArray(Files);
-			        	
-			        	singleDatabase tab = new singleDatabase(Files);
-			        	
-			        	tabbedPane.addTab("New tab", null, tab, null);
-			        	
-		        	}
-		        }
-			}
-		});
-		panel_1.add(btnNewButton);
+		JButton addImages_btn = new JButton("add Images");
+		choose_pnl.add(addImages_btn, "cell 0 0");
 		
-		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		panel.add(tabbedPane, BorderLayout.CENTER);
+		JButton addFolder_btn = new JButton("add Folder");
+		choose_pnl.add(addFolder_btn, "cell 0 1");
+		
+		JButton render_btn = new JButton("next");
+		choose_pnl.add(render_btn, "cell 0 19");
+		
+		JButton Database_btn = new JButton("Database");
+		choose_pnl.add(Database_btn, "cell 0 20");
+		
+		JPanel Tree_pnl = new JPanel();
+		panel.add(Tree_pnl, BorderLayout.CENTER);
+		Tree_pnl.setLayout(new BorderLayout(0, 0));
+		
+		DefaultMutableTreeNode top = new DefaultMutableTreeNode("selected images");
+		JTree tree = new JTree(top);
+		Tree_pnl.add(tree, BorderLayout.CENTER);
+		
+		new FolderTreeManager();
 	}
 
+	enum TreeNoteType{
+		Folder,
+		Image
+	}
 }

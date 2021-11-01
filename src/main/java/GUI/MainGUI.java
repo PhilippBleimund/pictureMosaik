@@ -43,6 +43,8 @@ import Computation.helper;
 import Computation.smartSplitter;
 import Listener.ProgressEvent;
 import Listener.ProgressListener;
+import Listener.RenderQueueEvent;
+import Listener.RenderQueueListener;
 import Manager.RenderQueue;
 import Manager.Renderer;
 import Manager.Renderer.Status;
@@ -140,6 +142,15 @@ public class MainGUI {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		RenderQueue.getInstance().addListener(new RenderQueueListener() {
+
+			@Override
+			public void triggerQueueUpdate(RenderQueueEvent e) {
+				RenderQueueComboBox.setModel(new DefaultComboBoxModel<String>(RenderQueue.getInstance().getQueueAsArray()));
+			}
+			
+		});
+		
 		frame = new JFrame();
 		frame.setBounds(100, 100, 840, 587);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -393,14 +404,13 @@ public class MainGUI {
 	        			case DONE:
 	        				progressBar.setValue(0);
 	        				progressBar.setString(null);
-	        				RenderQueueComboBox.setModel(new DefaultComboBoxModel<String>(instance.getQueueAsArray()));
 	        				break;
 	        			}
 	        		}
 	        		
 	        	});
 	        	instance.addRender(render);
-	        	
+	        	RenderQueueComboBox.setModel(new DefaultComboBoxModel<String>(instance.getQueueAsArray()));
 			}
 		});
 		controlPanel.add(renderStart);
