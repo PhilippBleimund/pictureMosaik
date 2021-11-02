@@ -5,7 +5,6 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
-import javax.swing.JTabbedPane;
 
 import GUI.SynchronousJFXFileChooser;
 import ImageSelector.FolderTree.FolderTreeManager;
@@ -21,18 +20,35 @@ import java.util.Arrays;
 import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.JTree;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.JList;
 import net.miginfocom.swing.MigLayout;
 
 public class ImageSelectorUI {
-
+	
 	private JFrame frame;
+	private FolderTreeManager manager;
+	private JTree tree;
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		
+		try {
+			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+				if ("Windows".equals(info.getName())) {
+					UIManager.setLookAndFeel(info.getClassName());
+					
+				}
+				System.out.println(info.getClassName());
+			}
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+			
+		}
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -49,6 +65,7 @@ public class ImageSelectorUI {
 	 * Create the application.
 	 */
 	public ImageSelectorUI() {
+		manager = new FolderTreeManager();
 		initialize();
 	}
 
@@ -69,6 +86,36 @@ public class ImageSelectorUI {
 		choose_pnl.setLayout(new MigLayout("", "[]", "[][][][][][][][][][][][][][][][][][][][][]"));
 		
 		JButton addImages_btn = new JButton("add Images");
+		addImages_btn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFXPanel dummy = new JFXPanel();
+				List<File> selectedFilesList = null;
+				
+		        Platform.setImplicitExit(false);
+		        try {
+		            SynchronousJFXFileChooser chooser = new SynchronousJFXFileChooser(() -> {
+		                FileChooser ch = new FileChooser();
+		                ch.setTitle("Open any file you wish");
+		                ch.getExtensionFilters().addAll(
+		                	     new FileChooser.ExtensionFilter("PNG", "*.png")
+		                	    ,new FileChooser.ExtensionFilter("JPG", "*.jpg")
+		                	    ,new FileChooser.ExtensionFilter("ALL", new ArrayList<String>(Arrays.asList("*.png", "*.jpg")))
+		                	);
+		                return ch;
+		            });
+		            selectedFilesList = chooser.showOpenMultipleDialog();
+		            // this will throw an exception:
+		            //chooser.showDialog(ch -> ch.showOpenDialog(null), 1, TimeUnit.NANOSECONDS);
+		        } finally {
+		        	if(selectedFilesList.size() > 0) {
+		        		manager.addFiles(new ArrayList<File>(selectedFilesList));
+		        		updateTree();
+		        	}
+		        }
+		        
+		        
+			}
+		});
 		choose_pnl.add(addImages_btn, "cell 0 0");
 		
 		JButton addFolder_btn = new JButton("add Folder");
@@ -85,12 +132,22 @@ public class ImageSelectorUI {
 		Tree_pnl.setLayout(new BorderLayout(0, 0));
 		
 		DefaultMutableTreeNode top = new DefaultMutableTreeNode("selected images");
-		JTree tree = new JTree(top);
+		tree = new JTree(top);
 		Tree_pnl.add(tree, BorderLayout.CENTER);
-		
-		new FolderTreeManager();
 	}
 
+	private void updateTree() {
+		DefaultTreeModel  model = (DefaultTreeModel) tree.getModel();
+		model.setRoot(manager.getTreeModel(new DefaultMutableTreeNode("selected images")));
+		model.reload();
+		frame.getContentPane().revalidate();
+		frame.getContentPane().repaint();
+	}
+	
+	public File[] getFiles() {
+		manager
+	}
+	
 	enum TreeNoteType{
 		Folder,
 		Image

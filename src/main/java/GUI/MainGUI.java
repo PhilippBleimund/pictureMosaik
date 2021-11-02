@@ -75,7 +75,7 @@ import javax.swing.JProgressBar;
 
 public class MainGUI {
 
-	private JFrame frame;
+	JFrame frame;
 	MapBild bild;
 	
 	calculateAverage pictureAverage;
@@ -96,38 +96,6 @@ public class MainGUI {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		
-		System.setProperty("sun.java2d.opengl", "true");
-		
-		System.out.println(Runtime.getRuntime().maxMemory());
-		System.out.println(Runtime.getRuntime().totalMemory());
-		System.out.println(Runtime.getRuntime().freeMemory());
-		
-		try {
-			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-				if ("Windows".equals(info.getName())) {
-					UIManager.setLookAndFeel(info.getClassName());
-					
-				}
-				System.out.println(info.getClassName());
-			}
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
-			
-		}
-		
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					MainGUI window = new MainGUI();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the application.
@@ -138,6 +106,14 @@ public class MainGUI {
 		initialize();
 	}
 
+	public void setImages(ArrayList<File> files) {
+		FolderData.selectedImages = files.toArray(new File[files.size()]);
+	}
+	
+	public void setDatabases(ArrayList<File> Databases) {
+		FolderData.selectedDatabases = Databases.toArray(new File[Databases.size()]);
+	}
+	
 	/**
 	 * Initialize the contents of the frame.
 	 */

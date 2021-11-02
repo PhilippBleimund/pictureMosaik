@@ -46,6 +46,10 @@ public class FolderTreeNode {
 		return this.children;
 	}
 	
+	public FolderTreeNode getChildrenAt(int index) {
+		return this.children.get(index);
+	}
+	
 	public ArrayList<File> getFiles(){
 		return this.files;
 	}
