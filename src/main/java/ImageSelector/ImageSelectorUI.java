@@ -20,12 +20,13 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 
 import GUI.MainGUI;
 import GUI.SynchronousJFXFileChooser;
 import GUI.WindowManager;
-import ImageSelector.FolderTree.DatabaseTreeValue;
 import ImageSelector.FolderTree.FolderTreeManager;
+import ImageSelector.FolderTree.TreeValue;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.stage.FileChooser;
@@ -166,6 +167,21 @@ public class ImageSelectorUI {
 				frame.setVisible(false);
 			}
 		});
+		
+		JButton removeFolder_btn = new JButton("remove");
+		removeFolder_btn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				DefaultMutableTreeNode lastPathComponent = (DefaultMutableTreeNode)tree.getSelectionPath().getLastPathComponent();
+				DefaultMutableTreeNode childAt = (DefaultMutableTreeNode) lastPathComponent.getChildAt(0);
+				Object userObject = childAt.getUserObject();
+		        if(userObject instanceof TreeValue) {
+		        	TreeValue userObjectCast = (TreeValue)userObject;
+		        	manager.removeFolder(userObjectCast.getURI());
+		        }
+				updateTree();
+			}
+		});
+		choose_pnl.add(removeFolder_btn, "cell 0 4");
 		choose_pnl.add(render_btn, "cell 0 20");
 		
 		JPanel Tree_pnl = new JPanel();
@@ -185,8 +201,11 @@ public class ImageSelectorUI {
 		            expanded, isLeaf, row, focused);
 		        DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
 		        Object userObject = node.getUserObject();
-		        if(userObject instanceof DatabaseTreeValue) {
-		        	setLeafIcon(DatabaseIcon);
+		        if(userObject instanceof TreeValue) {
+		        	TreeValue userObjectCast = (TreeValue)userObject;
+			        if(userObjectCast.getType() == TreeValue.type.DATABASE) {
+			        	setLeafIcon(DatabaseIcon);
+			        }
 		        }
 		        return c;
 		      }

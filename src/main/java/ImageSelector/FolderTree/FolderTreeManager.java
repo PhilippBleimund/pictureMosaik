@@ -6,6 +6,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import ImageSelector.FolderTree.TreeValue.type;
+
 public class FolderTreeManager {
 
 	FolderTreeNode tree = new FolderTreeNode(new File(""));
@@ -38,7 +40,15 @@ public class FolderTreeManager {
 		addQueueToTree.addDatabases(Databases);
 	}
 	
-	public FolderTreeNode addQueueToTree(LinkedBlockingQueue<File> queue, FolderTreeNode subTree) {
+	public void removeFolder(File folder) {
+		LinkedBlockingQueue<File> queue = getFileAsQueue(new LinkedBlockingQueue<File>(), folder);
+		//no new Path will be created during this process since only available path could be selected
+		FolderTreeNode addQueueToTree = addQueueToTree(queue, tree);
+		addQueueToTree.getFiles().clear();
+		addQueueToTree.getDatabases().clear();
+	}
+	
+	private FolderTreeNode addQueueToTree(LinkedBlockingQueue<File> queue, FolderTreeNode subTree) {
 		File file = queue.poll();
 		if(file != null) {
 			FolderTreeNode existing = null;
@@ -57,7 +67,7 @@ public class FolderTreeManager {
 		return subTree;
 	}
 	
-	public LinkedBlockingQueue<File> getFileAsQueue(LinkedBlockingQueue<File> queue, File file){
+	private LinkedBlockingQueue<File> getFileAsQueue(LinkedBlockingQueue<File> queue, File file){
 		if(file != null) {
 			LinkedBlockingQueue<File> queue2 = getFileAsQueue(queue, file.getParentFile());
 			queue2.add(file);
@@ -85,11 +95,11 @@ public class FolderTreeManager {
 		}else {
 			DefaultMutableTreeNode subModel = new DefaultMutableTreeNode(subTree.getFolder().getName());
 			if(files.size() > 0) {
-				subModel.add(new DefaultMutableTreeNode(files.size() + " imgages"));
+				subModel.add(new DefaultMutableTreeNode(new TreeValue(files.size() + " imgages", files.get(0).getParentFile(), type.IMAGES)));
 			}
 			if(Databases.size() > 0) {
 				for(int i=0;i<Databases.size();i++) {
-					DefaultMutableTreeNode database = new DefaultMutableTreeNode(new DatabaseTreeValue(Databases.get(i).getName()));
+					DefaultMutableTreeNode database = new DefaultMutableTreeNode(new TreeValue(Databases.get(i).getName(), Databases.get(0).getParentFile(), type.DATABASE));
 					subModel.add(database);
 				}
 			}
