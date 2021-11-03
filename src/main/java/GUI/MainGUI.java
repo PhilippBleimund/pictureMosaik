@@ -41,6 +41,7 @@ import org.imgscalr.Scalr;
 import Computation.DataBaseManager;
 import Computation.helper;
 import Computation.smartSplitter;
+import ImageSelector.ImageSelectorUI;
 import Listener.ProgressEvent;
 import Listener.ProgressListener;
 import Listener.RenderQueueEvent;
@@ -72,10 +73,13 @@ import javax.swing.JTextField;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 import javax.swing.JProgressBar;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 public class MainGUI {
 
-	JFrame frame;
+	public JFrame frame;
 	MapBild bild;
 	
 	calculateAverage pictureAverage;
@@ -119,12 +123,10 @@ public class MainGUI {
 	 */
 	private void initialize() {
 		RenderQueue.getInstance().addListener(new RenderQueueListener() {
-
 			@Override
 			public void triggerQueueUpdate(RenderQueueEvent e) {
 				RenderQueueComboBox.setModel(new DefaultComboBoxModel<String>(RenderQueue.getInstance().getQueueAsArray()));
 			}
-			
 		});
 		
 		frame = new JFrame();
@@ -225,40 +227,6 @@ public class MainGUI {
 			}
 		});
 		controlPanel.add(chooseOriginal);
-		
-		JButton chooseFiles = new JButton("choose Files");
-		chooseFiles.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JFXPanel dummy = new JFXPanel();
-				List<File> selectedFilesList = null;
-				
-		        Platform.setImplicitExit(false);
-		        try {
-		            SynchronousJFXFileChooser chooser = new SynchronousJFXFileChooser(() -> {
-		                FileChooser ch = new FileChooser();
-		                ch.setTitle("Open any file you wish");
-		                ch.getExtensionFilters().addAll(
-		                	     new FileChooser.ExtensionFilter("PNG", "*.png")
-		                	    ,new FileChooser.ExtensionFilter("JPG", "*.jpg")
-		                	    ,new FileChooser.ExtensionFilter("ALL", new ArrayList<String>(Arrays.asList("*.png", "*.jpg")))
-		                	);
-		                return ch;
-		            });
-		            selectedFilesList = chooser.showOpenMultipleDialog();
-		            // this will throw an exception:
-		            //chooser.showDialog(ch -> ch.showOpenDialog(null), 1, TimeUnit.NANOSECONDS);
-		        } finally {
-		        	if(selectedFilesList.size() > 0) {
-		        		System.out.println("hehe");
-		        		FolderData.selectedImages = new File[selectedFilesList.size()];
-			        	selectedFilesList.toArray(FolderData.selectedImages);
-		        	}
-		        }
-		        
-		        
-			}
-		});
-		controlPanel.add(chooseFiles);
 		
 		JButton chooseFolder_btn = new JButton("choose folder");
 		chooseFolder_btn.addActionListener(new ActionListener() {
@@ -453,34 +421,6 @@ public class MainGUI {
 		});
 		controlPanel.add(createDatabaseWithFiles_btn);
 		
-		JButton chooseDatabases_btn = new JButton("choose Databases");
-		chooseDatabases_btn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JFXPanel dummy = new JFXPanel();
-				List<File> selectedFilesList = null;
-				
-		        Platform.setImplicitExit(false);
-		        try {
-		            SynchronousJFXFileChooser chooser = new SynchronousJFXFileChooser(() -> {
-		                FileChooser ch = new FileChooser();
-		                ch.setTitle("Open any file you wish");
-		                ch.getExtensionFilters().addAll(
-		                	     new FileChooser.ExtensionFilter("TXT", "*.txt")
-		                	);
-		                return ch;
-		            });
-		            selectedFilesList = chooser.showOpenMultipleDialog();
-		            // this will throw an exception:
-		            chooser.showDialog(ch -> ch.showOpenDialog(null), 1, TimeUnit.NANOSECONDS);
-		        } finally {
-		        	System.out.println("hehe");
-		        	FolderData.selectedDatabases = new File[selectedFilesList.size()];
-		        	selectedFilesList.toArray(FolderData.selectedDatabases);
-		        }
-			}
-		});
-		controlPanel.add(chooseDatabases_btn);
-		
 		JPanel ProgressBarPanel = new JPanel();
 		panel.add(ProgressBarPanel, BorderLayout.SOUTH);
 		ProgressBarPanel.setLayout(new BorderLayout(0, 0));
@@ -494,6 +434,21 @@ public class MainGUI {
 		
 		RenderQueueComboBox = new JComboBox<String>(new DefaultComboBoxModel<String>(new String[] {"empty Queue"}));
 		RenderQueueRanel.add(RenderQueueComboBox);
+		
+		JMenuBar menuBar = new JMenuBar();
+		panel.add(menuBar, BorderLayout.NORTH);
+		
+		JMenu File_menu = new JMenu("File");
+		menuBar.add(File_menu);
+		
+		JMenuItem File_ChangeFIles_menuButton = new JMenuItem("change Files...");
+		File_ChangeFIles_menuButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ImageSelectorUI selectorInstance = WindowManager.getSelectorInstance();
+				selectorInstance.frame.setVisible(true);
+			}
+		});
+		File_menu.add(File_ChangeFIles_menuButton);
 	}
 	
 	public void paintLines(splitObj splits) {

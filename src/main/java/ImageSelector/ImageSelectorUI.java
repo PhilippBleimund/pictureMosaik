@@ -1,34 +1,39 @@
 package ImageSelector;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import java.awt.BorderLayout;
-
-import GUI.SynchronousJFXFileChooser;
-import ImageSelector.FolderTree.FolderTreeManager;
-import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
-import javafx.stage.FileChooser;
-
-import javax.swing.JButton;
+import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.Component;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.awt.event.ActionEvent;
+
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JTree;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
+
+import GUI.MainGUI;
+import GUI.SynchronousJFXFileChooser;
+import GUI.WindowManager;
+import ImageSelector.FolderTree.DatabaseTreeValue;
+import ImageSelector.FolderTree.FolderTreeManager;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.stage.FileChooser;
 import net.miginfocom.swing.MigLayout;
 
 public class ImageSelectorUI {
 	
-	private JFrame frame;
+	public JFrame frame;
 	private FolderTreeManager manager;
 	private JTree tree;
 	/**
@@ -121,11 +126,47 @@ public class ImageSelectorUI {
 		JButton addFolder_btn = new JButton("add Folder");
 		choose_pnl.add(addFolder_btn, "cell 0 1");
 		
-		JButton render_btn = new JButton("next");
-		choose_pnl.add(render_btn, "cell 0 19");
+		JButton addDatabase_btn = new JButton("add Database");
+		addDatabase_btn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {		
+				JFXPanel dummy = new JFXPanel();
+				List<File> selectedFilesList = null;
+				
+		        Platform.setImplicitExit(false);
+		        try {
+		            SynchronousJFXFileChooser chooser = new SynchronousJFXFileChooser(() -> {
+		                FileChooser ch = new FileChooser();
+		                ch.setTitle("Open any file you wish");
+		                ch.getExtensionFilters().addAll(
+		                		new FileChooser.ExtensionFilter("TXT", "*.txt")
+		                	);
+		                return ch;
+		            });
+		            selectedFilesList = chooser.showOpenMultipleDialog();
+		            // this will throw an exception:
+		            //chooser.showDialog(ch -> ch.showOpenDialog(null), 1, TimeUnit.NANOSECONDS);
+		        } finally {
+		        	if(selectedFilesList.size() > 0) {
+		        		manager.addDatabases(new ArrayList<File>(selectedFilesList));
+		        		updateTree();
+		        	}
+		        }
+		        
+		        
+			}
+		});
+		choose_pnl.add(addDatabase_btn, "cell 0 2");
 		
-		JButton Database_btn = new JButton("Database");
-		choose_pnl.add(Database_btn, "cell 0 20");
+		JButton render_btn = new JButton("save");
+		render_btn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				WindowManager.tansferFromSelectorToGUI();
+				MainGUI guiInstance = WindowManager.getGuiInstance();
+				guiInstance.frame.setVisible(true);
+				frame.setVisible(false);
+			}
+		});
+		choose_pnl.add(render_btn, "cell 0 20");
 		
 		JPanel Tree_pnl = new JPanel();
 		panel.add(Tree_pnl, BorderLayout.CENTER);
@@ -133,6 +174,23 @@ public class ImageSelectorUI {
 		
 		DefaultMutableTreeNode top = new DefaultMutableTreeNode("selected images");
 		tree = new JTree(top);
+		tree.setCellRenderer(new DefaultTreeCellRenderer() {
+		      private Icon DatabaseIcon = UIManager.getIcon("FileView.hardDriveIcon");
+		      
+		      @Override
+		      public Component getTreeCellRendererComponent(JTree tree, Object value,
+		          boolean selected, boolean expanded, boolean isLeaf, int row,
+		          boolean focused) {
+		        Component c = super.getTreeCellRendererComponent(tree, value, selected,
+		            expanded, isLeaf, row, focused);
+		        DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
+		        Object userObject = node.getUserObject();
+		        if(userObject instanceof DatabaseTreeValue) {
+		        	setLeafIcon(DatabaseIcon);
+		        }
+		        return c;
+		      }
+		    });
 		Tree_pnl.add(tree, BorderLayout.CENTER);
 	}
 
@@ -144,8 +202,14 @@ public class ImageSelectorUI {
 		frame.getContentPane().repaint();
 	}
 	
-	public File[] getFiles() {
-		manager
+	public ArrayList<File> getFiles() {
+		ArrayList<File> treeFiles = manager.getTreeFiles();
+		return treeFiles;
+	}
+	
+	public ArrayList<File> getDatabases() {
+		ArrayList<File> treeDatabases = manager.getTreeDatabases();
+		return treeDatabases;
 	}
 	
 	enum TreeNoteType{

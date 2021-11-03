@@ -7,6 +7,7 @@ public class FolderTreeNode {
 
 	ArrayList<FolderTreeNode> children = new ArrayList<FolderTreeNode>();
 	ArrayList<File> files = new ArrayList<File>();
+	ArrayList<File> Databases = new ArrayList<File>();
 	
 	File folder;
 	
@@ -42,6 +43,10 @@ public class FolderTreeNode {
 		this.files.addAll(files);
 	}
 	
+	public void addDatabases(ArrayList<File> Databases) {
+		this.Databases.addAll(Databases);
+	}
+	
 	public ArrayList<FolderTreeNode> getChildren() {
 		return this.children;
 	}
@@ -52,6 +57,10 @@ public class FolderTreeNode {
 	
 	public ArrayList<File> getFiles(){
 		return this.files;
+	}
+	
+	public ArrayList<File> getDatabases(){
+		return this.Databases;
 	}
 	
 	public File getFolder() {

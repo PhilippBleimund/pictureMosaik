@@ -22,7 +22,20 @@ public class FolderTreeManager {
 		File representive = files.get(0).getParentFile();
 		LinkedBlockingQueue<File> queue = getFileAsQueue(new LinkedBlockingQueue<File>(), representive);
 		FolderTreeNode addQueueToTree = addQueueToTree(queue, tree);
+		files.removeAll(addQueueToTree.getFiles());
 		addQueueToTree.addFiles(files);
+	}
+	
+	/**
+	 * 
+	 * @param Databases has to be in the same Folder
+	 */
+	public void addDatabases(ArrayList<File> Databases) {
+		File representive = Databases.get(0).getParentFile();
+		LinkedBlockingQueue<File> queue = getFileAsQueue(new LinkedBlockingQueue<File>(), representive);
+		FolderTreeNode addQueueToTree = addQueueToTree(queue, tree);
+		Databases.removeAll(addQueueToTree.getDatabases());
+		addQueueToTree.addDatabases(Databases);
 	}
 	
 	public FolderTreeNode addQueueToTree(LinkedBlockingQueue<File> queue, FolderTreeNode subTree) {
@@ -61,17 +74,25 @@ public class FolderTreeManager {
 		return model;
 	}
 	
-	public void TreeToModel(DefaultMutableTreeNode model, FolderTreeNode subTree) {
+	private void TreeToModel(DefaultMutableTreeNode model, FolderTreeNode subTree) {
 		ArrayList<File> files = subTree.getFiles();
+		ArrayList<File> Databases = subTree.getDatabases();
 		ArrayList<FolderTreeNode> children = subTree.getChildren();
-		if(files.size() == 0 && children.size() <= 1) {
+		if(files.size() == 0 && Databases.size() == 0 && children.size() <= 1) {
 			for(int i=0;i<children.size();i++) {
 				TreeToModel(model, children.get(i));
 			}
 		}else {
 			DefaultMutableTreeNode subModel = new DefaultMutableTreeNode(subTree.getFolder().getName());
-			if(files.size() > 0)
+			if(files.size() > 0) {
 				subModel.add(new DefaultMutableTreeNode(files.size() + " imgages"));
+			}
+			if(Databases.size() > 0) {
+				for(int i=0;i<Databases.size();i++) {
+					DefaultMutableTreeNode database = new DefaultMutableTreeNode(new DatabaseTreeValue(Databases.get(i).getName()));
+					subModel.add(database);
+				}
+			}
 			model.add(subModel);
 			for(int i=0;i<children.size();i++) {
 				TreeToModel(subModel, children.get(i));
@@ -79,7 +100,13 @@ public class FolderTreeManager {
 		}
 	}
 	
-	public void getFiles(ArrayList<File> allFiles, FolderTreeNode subTree) {
+	public ArrayList<File> getTreeFiles() {
+		ArrayList<File> files = new ArrayList<File>();
+		getFiles(files, tree);
+		return files;
+	}
+	
+	private void getFiles(ArrayList<File> allFiles, FolderTreeNode subTree) {
 		ArrayList<File> files = subTree.getFiles();
 		ArrayList<FolderTreeNode> children = subTree.getChildren();
 		if(files.size() == 0) {
@@ -90,6 +117,27 @@ public class FolderTreeManager {
 			allFiles.addAll(files);
 			for(int i=0;i<children.size();i++) {
 				getFiles(allFiles, children.get(i));
+			}
+		}
+	}
+	
+	public ArrayList<File> getTreeDatabases() {
+		ArrayList<File> Databases = new ArrayList<File>();
+		getDatabases(Databases, tree);
+		return Databases;
+	}
+	
+	private void getDatabases(ArrayList<File> allDatabases, FolderTreeNode subTree) {
+		ArrayList<File> files = subTree.getDatabases();
+		ArrayList<FolderTreeNode> children = subTree.getChildren();
+		if(files.size() == 0) {
+			for(int i=0;i<children.size();i++) {
+				getDatabases(allDatabases, children.get(i));
+			}
+		}else {
+			allDatabases.addAll(files);
+			for(int i=0;i<children.size();i++) {
+				getDatabases(allDatabases, children.get(i));
 			}
 		}
 	}
