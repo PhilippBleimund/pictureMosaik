@@ -37,14 +37,14 @@ public class downrender {
 	public void scaleImage(ScaledImages AllImages, Point location, File locationImage, int x, int y,
 			Scalr.Method method) {
 
-		BufferedImage bi = prepareImage(locationImage);
-
-		Dimensions D = getDimension(bi, x, y);
-
 		Point p = AllImages.exists(locationImage.getName());
 
 		if (p == null) {
 
+			BufferedImage bi = prepareImage(locationImage);
+
+			Dimensions D = getDimension(bi, x, y);
+			
 			BufferedImage resize = null;
 
 			resize = Scalr.resize(bi, method, Scalr.Mode.FIT_EXACT, D.width, D.height);

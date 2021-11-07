@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -22,50 +23,26 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 
+import Computation.helper;
 import GUI.MainGUI;
+import GUI.SynchronousJFXDirectoryChooser;
 import GUI.SynchronousJFXFileChooser;
 import GUI.WindowManager;
 import ImageSelector.FolderTree.FolderTreeManager;
 import ImageSelector.FolderTree.TreeValue;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import net.miginfocom.swing.MigLayout;
+import java.awt.GridLayout;
+import javax.swing.JLabel;
 
 public class ImageSelectorUI {
 	
 	public JFrame frame;
 	private FolderTreeManager manager;
 	private JTree tree;
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		
-		try {
-			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-				if ("Windows".equals(info.getName())) {
-					UIManager.setLookAndFeel(info.getClassName());
-					
-				}
-				System.out.println(info.getClassName());
-			}
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
-			
-		}
-		
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ImageSelectorUI window = new ImageSelectorUI();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the application.
@@ -89,7 +66,6 @@ public class ImageSelectorUI {
 		
 		JPanel choose_pnl = new JPanel();
 		panel.add(choose_pnl, BorderLayout.WEST);
-		choose_pnl.setLayout(new MigLayout("", "[]", "[][][][][][][][][][][][][][][][][][][][][]"));
 		
 		JButton addImages_btn = new JButton("add Images");
 		addImages_btn.addActionListener(new ActionListener() {
@@ -122,10 +98,37 @@ public class ImageSelectorUI {
 		        
 			}
 		});
-		choose_pnl.add(addImages_btn, "cell 0 0");
+		choose_pnl.setLayout(new GridLayout(0, 1, 0, 0));
+		choose_pnl.add(addImages_btn);
 		
 		JButton addFolder_btn = new JButton("add Folder");
-		choose_pnl.add(addFolder_btn, "cell 0 1");
+		addFolder_btn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFXPanel dummy = new JFXPanel();
+				File file = null;
+		        Platform.setImplicitExit(false);
+		        try {
+		            SynchronousJFXDirectoryChooser chooser = new SynchronousJFXDirectoryChooser(() -> {
+		            	DirectoryChooser ch = new DirectoryChooser();
+		                ch.setTitle("Open any file you wish");
+		                return ch;
+		            });
+		            file = chooser.showOpenDialog();
+		            System.out.println(file);
+		            // this will throw an exception:
+		            chooser.showDialog(ch -> ch.showDialog(null), 1, TimeUnit.NANOSECONDS);
+		        } finally {
+		        	ArrayList<ArrayList<File>> allFiles = helper.listFilesForFolder(file, new ArrayList<ArrayList<File>>());
+		        	for(ArrayList<File> list : allFiles) {
+		        		if(list.size() > 0)
+		        			manager.addFiles(list);
+		        	}
+		        	updateTree();
+		        }
+			}
+		});
+		choose_pnl.add(addFolder_btn);
 		
 		JButton addDatabase_btn = new JButton("add Database");
 		addDatabase_btn.addActionListener(new ActionListener() {
@@ -152,11 +155,9 @@ public class ImageSelectorUI {
 		        		updateTree();
 		        	}
 		        }
-		        
-		        
 			}
 		});
-		choose_pnl.add(addDatabase_btn, "cell 0 2");
+		choose_pnl.add(addDatabase_btn);
 		
 		JButton render_btn = new JButton("save");
 		render_btn.addActionListener(new ActionListener() {
@@ -181,8 +182,56 @@ public class ImageSelectorUI {
 				updateTree();
 			}
 		});
-		choose_pnl.add(removeFolder_btn, "cell 0 4");
-		choose_pnl.add(render_btn, "cell 0 20");
+		
+		JLabel label = new JLabel("");
+		choose_pnl.add(label);
+		choose_pnl.add(removeFolder_btn);
+		
+		JLabel label_1 = new JLabel("");
+		choose_pnl.add(label_1);
+		
+		JLabel label_2 = new JLabel("");
+		choose_pnl.add(label_2);
+		
+		JLabel label_3 = new JLabel("");
+		choose_pnl.add(label_3);
+		
+		JLabel label_4 = new JLabel("");
+		choose_pnl.add(label_4);
+		
+		JLabel label_5 = new JLabel("");
+		choose_pnl.add(label_5);
+		
+		JLabel label_6 = new JLabel("");
+		choose_pnl.add(label_6);
+		
+		JLabel label_7 = new JLabel("");
+		choose_pnl.add(label_7);
+		
+		JLabel label_8 = new JLabel("");
+		choose_pnl.add(label_8);
+		
+		JLabel label_9 = new JLabel("");
+		choose_pnl.add(label_9);
+		
+		JLabel label_10 = new JLabel("");
+		choose_pnl.add(label_10);
+		
+		JLabel label_11 = new JLabel("");
+		choose_pnl.add(label_11);
+		
+		JLabel label_12 = new JLabel("");
+		choose_pnl.add(label_12);
+		
+		JLabel label_13 = new JLabel("");
+		choose_pnl.add(label_13);
+		
+		JLabel label_14 = new JLabel("");
+		choose_pnl.add(label_14);
+		
+		JLabel label_15 = new JLabel("");
+		choose_pnl.add(label_15);
+		choose_pnl.add(render_btn);
 		
 		JPanel Tree_pnl = new JPanel();
 		panel.add(Tree_pnl, BorderLayout.CENTER);

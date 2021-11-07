@@ -3,10 +3,12 @@ package GUI;
 import java.awt.EventQueue;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.event.WindowAdapter;
 import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
@@ -42,7 +44,24 @@ public class WindowManager {
 				try {
 					selectorInstance = new ImageSelectorUI();
 					selectorInstance.frame.setVisible(true);
-					selectorInstance.frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+					selectorInstance.frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+					WindowListener exitListener = new WindowAdapter() {
+					    @Override
+					    public void windowClosing(WindowEvent e) {
+					    	if(!mainGuiInstance.frame.isVisible()) {
+						        int confirm = JOptionPane.showOptionDialog(
+						             null, "Are You Sure to Close Application?", 
+						             "Exit Confirmation", JOptionPane.YES_NO_OPTION, 
+						             JOptionPane.QUESTION_MESSAGE, null, null, null);
+						        if (confirm == 0) {
+						           System.exit(0);
+						        }
+					    	}else {
+					    		selectorInstance.frame.setVisible(false);
+					    	}
+					    }
+					};
+					selectorInstance.frame.addWindowListener(exitListener);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -53,6 +72,20 @@ public class WindowManager {
 			public void run() {
 				try {
 					mainGuiInstance = new MainGUI();
+					mainGuiInstance.frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+					WindowListener exitListener = new WindowAdapter() {
+					    @Override
+					    public void windowClosing(WindowEvent e) {
+					        int confirm = JOptionPane.showOptionDialog(
+					             null, "Are You Sure to Close Application?", 
+					             "Exit Confirmation", JOptionPane.YES_NO_OPTION, 
+					             JOptionPane.QUESTION_MESSAGE, null, null, null);
+					        if (confirm == 0) {
+					           System.exit(0);
+					    	}
+					    }
+					};
+					mainGuiInstance.frame.addWindowListener(exitListener);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

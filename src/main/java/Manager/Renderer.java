@@ -93,24 +93,24 @@ public class Renderer extends SwingWorker{
         	FolderData.selectedDatabasesList.add(Obj);
         }
 		
+        notifyListener(Status.DATABASE_MERGE);
 		DatabaseObj[] DatabaseArray = new DatabaseObj[FolderData.selectedDatabasesList.size()];
-		notifyListener(Status.DATABASE_MERGE);
 		FolderData.selectedDatabasesList.toArray(DatabaseArray);
 		
-		compareColor compare = new compareColor();
 		notifyListener(Status.COMPUTATION);
+		compareColor compare = new compareColor();
         File[][] choosen = compare.compare(averageColorSections, DatabaseArray,  maxRepetition);
         
         ScaledImages AllImages;
         
-        downrenderFiles downrenderChoosen = new downrenderFiles();
         notifyListener(Status.DOWNRENDER_IMAGES);
+        downrenderFiles downrenderChoosen = new downrenderFiles();
         AllImages = downrenderChoosen.downrenderFilesAndSave(choosen, imageData, method);
         
         System.out.println("downrender");
         
-        mergeMosaik merger = new mergeMosaik();
         notifyListener(Status.MERGE_IMAGES);
+        mergeMosaik merger = new mergeMosaik();
         finishedRender = merger.mergeMosaik(AllImages, imageData, choosen);
         
         long timer2 = System.nanoTime();

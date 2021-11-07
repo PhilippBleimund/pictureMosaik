@@ -39,11 +39,12 @@ public class SynchronousJFXDirectoryChooser {
      * 
      * @param DirectoryChooserFactory the function used to construct new choosers
      */
-    public SynchronousJFXDirectoryChooser(Supplier<DirectoryChooser> DirectoryChooserFactory) {
-        this.DirectoryChooserFactory = DirectoryChooserFactory;
-    }
 
-    /**
+	public SynchronousJFXDirectoryChooser(Supplier<DirectoryChooser> supplier) {
+		this.DirectoryChooserFactory = supplier;
+	}
+
+	/**
      * Shows the DirectoryChooser dialog by calling the provided method.
      * 
      * Waits for one second for the dialog-showing task to start in the JavaFX

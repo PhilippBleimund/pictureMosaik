@@ -13,17 +13,19 @@ public class helper {
 		
 	}
 	
-	public static ArrayList<File> listFilesForFolder(final File folder, ArrayList<File> ImageList) {
+	public static ArrayList<ArrayList<File>> listFilesForFolder(final File folder, ArrayList<ArrayList<File>> ImageList) {
+		ArrayList<File> currentDirectory = new ArrayList<File>();
 	    for (final File fileEntry : folder.listFiles()) {
 	        if (fileEntry.isDirectory()) {
 	            listFilesForFolder(fileEntry, ImageList);
 	        } else {
 	        	if(getFileFormat(fileEntry.getName()).equals("jpg"))
-	        		ImageList.add(fileEntry);
+	        		currentDirectory.add(fileEntry);
 	        	else if(getFileFormat(fileEntry.getName()).equals("png"))
-	        		ImageList.add(fileEntry);
+	        		currentDirectory.add(fileEntry);
 	        }
 	    }
+	    ImageList.add(currentDirectory);
 	    return ImageList;
 	}
 	

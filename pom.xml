@@ -24,8 +24,12 @@
 			<url>file://${project.basedir}/local</url>
 		</repository>
 		<repository>
-		<id>clojure</id>
-		<url>https://clojars.org/repo/</url>
+			<id>clojure</id>
+			<url>https://clojars.org/repo/</url>
+		</repository>
+		<repository>
+			<id>central</id>
+			<url>https://repo1.maven.org/maven2/</url>
 		</repository>
 	</repositories>
 
@@ -80,11 +84,21 @@
 			<version>2.16.0</version>
 		</dependency>
 		<dependency>
-    <groupId>clojure-interop</groupId>
-    <artifactId>java.awt</artifactId>
-    <version>1.0.2</version>
+			<groupId>clojure-interop</groupId>
+			<artifactId>java.awt</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+
+		<dependency>
+    <groupId>org.swinglabs.swingx</groupId>
+    <artifactId>swingx-all</artifactId>
+    <version>1.6.5-1</version>
 </dependency>
 		
+		
+
+
+
 
 	</dependencies>
 

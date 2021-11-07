@@ -1,40 +1,32 @@
 package GUI;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import javax.swing.JSlider;
-import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.JSpinner;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.filechooser.FileSystemView;
 
 import org.imgscalr.Scalr;
 
@@ -49,33 +41,13 @@ import Listener.RenderQueueListener;
 import Manager.RenderQueue;
 import Manager.Renderer;
 import Manager.Renderer.Status;
-import PictureAnalyse.SplitPicture;
 import PictureAnalyse.calculateAverage;
-import PictureAnalyse.compareColor;
-import PictureAnalyse.mergeMosaik;
 import PictureAnalyse.splitObj;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import saveObjects.DatabaseObj;
 import saveObjects.FolderSave;
-
-import javax.swing.event.ChangeEvent;
-import java.awt.FlowLayout;
-import javax.swing.JSpinner;
-import javax.swing.SwingWorker;
-import javax.swing.JLabel;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JTextField;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeEvent;
-import javax.swing.JProgressBar;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 
 public class MainGUI {
 
@@ -83,13 +55,8 @@ public class MainGUI {
 	MapBild bild;
 	
 	calculateAverage pictureAverage;
-	JSpinner spinnerMosaik;
 	BufferedImage originalPicture;
 	FolderSave FolderData = new FolderSave();
-	JSpinner multiplier;
-	JSpinner maxRepetition_spinner;
-	JSlider OverlayTransparency_Slider;
-	JCheckBox originalPictureOverlay_CBox;
 	smartSplitter imageSplitter;
 	JComboBox<?> downrenderSettings_CBox;
 	JProgressBar progressBar;
@@ -176,13 +143,9 @@ public class MainGUI {
 		});
 		zoomPanel.add(resetScale);
 		
-		JPanel controlPanel = new JPanel();
-		controlPanel.setPreferredSize(new Dimension(200, 500));
-		scrollPane.setRowHeaderView(controlPanel);
-		controlPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		ControlPanel controlPanel = new ControlPanel();
 		
-		JButton chooseOriginal = new JButton("choose Original");
-		chooseOriginal.addActionListener(new ActionListener() {
+		controlPanel.getChooseOriginal_btn().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFXPanel dummy = new JFXPanel();
 				File selectedFile = null;
@@ -213,7 +176,7 @@ public class MainGUI {
 			        	
 			        	originalPicture = helper.deepCopy(a);
 			        	
-			        	splitObj paintedLines = imageSplitter.splitImage(helper.deepCopy(originalPicture), (int)spinnerMosaik.getValue(), 1);
+			        	splitObj paintedLines = imageSplitter.splitImage(helper.deepCopy(originalPicture), (int)controlPanel.getDimensionX_spnr().getValue(), (int)controlPanel.getDimensionY_spnr().getValue(), 1);
 			        	
 			        	paintLines(paintedLines);
 			        	
@@ -222,46 +185,13 @@ public class MainGUI {
 			        	bild.repaint();
 		        	}
 		        }
-                
-				
 			}
 		});
-		controlPanel.add(chooseOriginal);
 		
-		JButton chooseFolder_btn = new JButton("choose folder");
-		chooseFolder_btn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JFXPanel dummy = new JFXPanel();
-				File folder = null;
-				
-				Platform.setImplicitExit(false);
-				try {
-		            SynchronousJFXDirectoryChooser chooser = new SynchronousJFXDirectoryChooser(() -> {
-		                DirectoryChooser ch = new DirectoryChooser();
-		                ch.setTitle("Open any folder you wish");
-		                return ch;
-		            });
-		            folder = chooser.showOpenDialog();
-		            // this will throw an exception:
-		            //chooser.showDialog(ch -> ch.showOpenDialog(null), 1, TimeUnit.NANOSECONDS);
-		        } finally {
-		        	if(folder != null) {
-		        		System.out.println("hehe");
-			        	ArrayList<File> Images = helper.listFilesForFolder(folder, new ArrayList<File>());
-			        	FolderData.selectedImages = new File[Images.size()];
-			        	Images.toArray(FolderData.selectedImages);
-			        	System.out.println(folder);
-		        	}
-		        }
-			}
-		});
-		controlPanel.add(chooseFolder_btn);
-		
-		spinnerMosaik = new JSpinner();
-		spinnerMosaik.addChangeListener(new ChangeListener() {
+		controlPanel.getDimensionX_spnr().addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 		        
-				splitObj paintedLines = imageSplitter.splitImage(helper.deepCopy(originalPicture), (int)spinnerMosaik.getValue(), 1);
+				splitObj paintedLines = imageSplitter.splitImage(helper.deepCopy(originalPicture), (int)controlPanel.getDimensionX_spnr().getValue(), (int)controlPanel.getDimensionY_spnr().getValue(), 1);
 		        
 		        paintLines(paintedLines);
 		        
@@ -270,33 +200,30 @@ public class MainGUI {
 				bild.repaint();
 			}
 		});
-		spinnerMosaik.setPreferredSize(new Dimension(50, 20));
-		controlPanel.add(spinnerMosaik);
 		
-		JSlider sliderMosaik = new JSlider(2, 200);
-		sliderMosaik.setValue(2);
-		sliderMosaik.addChangeListener(new ChangeListener() {
+		controlPanel.getDimensionY_spnr().addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				spinnerMosaik.setValue(sliderMosaik.getValue());
-			}
-		});
-		controlPanel.add(sliderMosaik);
-		
-		JButton resetMosaik = new JButton("reset Mosaik");
-		resetMosaik.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				bild.setImage(originalPicture);
+		        
+				splitObj paintedLines = imageSplitter.splitImage(helper.deepCopy(originalPicture), (int)controlPanel.getDimensionX_spnr().getValue(), (int)controlPanel.getDimensionY_spnr().getValue(), 1);
+		        
+		        paintLines(paintedLines);
+		        
+				bild.setImage(paintedLines.image);
 				bild.revalidate();
 				bild.repaint();
 			}
 		});
-		controlPanel.add(resetMosaik);
 		
-		JButton renderStart = new JButton("start Render");
-		renderStart.addActionListener(new ActionListener() {
+		controlPanel.getMultiplier_spnr();
+		
+		controlPanel.getMaxRepetition_spnr();
+		
+		controlPanel.getAccuracy_ComboBox();
+		
+		controlPanel.getrender_btn().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
         		
-        		splitObj imageData = imageSplitter.splitImage(helper.deepCopy(originalPicture), (int)spinnerMosaik.getValue(), (int)multiplier.getValue());
+        		splitObj imageData = imageSplitter.splitImage(helper.deepCopy(originalPicture), (int)controlPanel.getDimensionX_spnr().getValue(), (int)controlPanel.getDimensionY_spnr().getValue(), (int)controlPanel.getMultiplier_spnr().getValue());
 	        	
 	        	DataBaseManager manager = new DataBaseManager();
 	        	ArrayList<DatabaseObj> Databasen = new ArrayList<DatabaseObj>();
@@ -309,7 +236,7 @@ public class MainGUI {
 	        	
 	        	RenderQueue instance = RenderQueue.getInstance();
 	        	
-	        	Renderer render = new Renderer(imageData, FolderData, (int)maxRepetition_spinner.getValue(), (Scalr.Method)downrenderSettings_CBox.getSelectedItem());
+	        	Renderer render = new Renderer(imageData, FolderData, (int)controlPanel.getMaxRepetition_spnr().getValue(), (Scalr.Method)downrenderSettings_CBox.getSelectedItem());
 	        	render.addListener(new ProgressListener() {
 	        		
 	        		@Override
@@ -323,27 +250,27 @@ public class MainGUI {
 	        				break;
 	        			case AVERAGE_COLOR_PICTURE:
 	        				progressBar.setValue(14);
-	        				progressBar.setString("Render #" + renderId + "average color of subsection");
+	        				progressBar.setString("Render #" + renderId + ": average color of subsection");
 	        				break;
 	        			case AVERAGE_COLOR_FILES:
 	        				progressBar.setValue(28);
-	        				progressBar.setString("Render #" + renderId + "average color of selected images");
+	        				progressBar.setString("Render #" + renderId + ": average color of selected images");
 	        				break;
 	        			case DATABASE_MERGE:
 	        				progressBar.setValue(42);
-	        				progressBar.setString("Render #" + renderId + "merging of databases");
+	        				progressBar.setString("Render #" + renderId + ": merging of databases");
 	        				break;
 	        			case COMPUTATION:
 	        				progressBar.setValue(56);
-	        				progressBar.setString("Render #" + renderId + "the best combination gets calculated");
+	        				progressBar.setString("Render #" + renderId + ": the best combination gets calculated");
 	        				break;
 	        			case DOWNRENDER_IMAGES:
 	        				progressBar.setValue(70);
-	        				progressBar.setString("Render #" + renderId + "the choosen images are rendered down");
+	        				progressBar.setString("Render #" + renderId + ": the choosen images are rendered down");
 	        				break;
 	        			case MERGE_IMAGES:
 	        				progressBar.setValue(84);
-	        				progressBar.setString("Render #" + renderId + "the down rendered images are getting merged");
+	        				progressBar.setString("Render #" + renderId + ": the down rendered images are getting merged");
 	        				break;
 	        			case DONE:
 	        				progressBar.setValue(0);
@@ -357,34 +284,8 @@ public class MainGUI {
 	        	RenderQueueComboBox.setModel(new DefaultComboBoxModel<String>(instance.getQueueAsArray()));
 			}
 		});
-		controlPanel.add(renderStart);
 		
-		JLabel mutiplier_lbl = new JLabel("multiplier");
-		controlPanel.add(mutiplier_lbl);
-		
-		multiplier = new JSpinner();
-		multiplier.setValue(1);
-		controlPanel.add(multiplier);
-		
-		JLabel maxRepetition_lbl = new JLabel("              max. repetition");
-		controlPanel.add(maxRepetition_lbl);
-		
-		maxRepetition_spinner = new JSpinner();
-		maxRepetition_spinner.setValue(50);
-		maxRepetition_spinner.setPreferredSize(new Dimension(50, 20));
-		controlPanel.add(maxRepetition_spinner);
-		
-		JLabel downrenderSettings_lbl = new JLabel("downrender Settings:");
-		controlPanel.add(downrenderSettings_lbl);
-		
-		downrenderSettings_CBox = new JComboBox(Scalr.Method.values());
-		controlPanel.add(downrenderSettings_CBox);
-		
-		//at the end because the state change event is fired
-		spinnerMosaik.setValue(2);
-		
-		JButton createDatabaseWithFiles_btn = new JButton("create Database with files");
-		createDatabaseWithFiles_btn.addActionListener(new ActionListener() {
+		controlPanel.getMakeDatabase_btn().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
 				JFXPanel dummy = new JFXPanel();
@@ -419,7 +320,8 @@ public class MainGUI {
 				
 			}
 		});
-		controlPanel.add(createDatabaseWithFiles_btn);
+		
+		scrollPane.setRowHeaderView(controlPanel);
 		
 		JPanel ProgressBarPanel = new JPanel();
 		panel.add(ProgressBarPanel, BorderLayout.SOUTH);
@@ -449,6 +351,14 @@ public class MainGUI {
 			}
 		});
 		File_menu.add(File_ChangeFIles_menuButton);
+		
+		JMenuItem Test_Mode_menuButton = new JMenuItem("test Mode");
+		Test_Mode_menuButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		File_menu.add(Test_Mode_menuButton);
 	}
 	
 	public void paintLines(splitObj splits) {

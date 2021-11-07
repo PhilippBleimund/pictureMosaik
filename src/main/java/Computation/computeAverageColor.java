@@ -39,7 +39,7 @@ public class computeAverageColor {
 			@Override
 			public void run() {
 				
-				/*long allocatedMemory      = (Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory());
+				long allocatedMemory      = (Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory());
 				long presumableFreeMemory = Runtime.getRuntime().maxMemory() - allocatedMemory;
 				System.out.println(presumableFreeMemory);
 				
@@ -58,8 +58,9 @@ public class computeAverageColor {
 					}
 					counter++;
 					if(counter >= 2000)
+						System.out.println(file.getAbsolutePath() + " too big for memory");
 						Thread.currentThread().interrupt();
-				}*/
+				}
 				
 				BufferedImage b = null;
 	        	try {
