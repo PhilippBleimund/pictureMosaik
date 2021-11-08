@@ -18,6 +18,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.miginfocom.swing.MigLayout;
+import testMode.Panel.Computation_panel;
 import testMode.Panel.Images_panel;
 import testMode.Panel.OriginalImage_panel;
 
@@ -124,7 +125,6 @@ public class testModeUI {
 		selectMenu_pnl.add(Images, "cell 0 4");
 		
 		images_panel = new Images_panel();
-		images_panel.setInfo("");
 		selectMenu_pnl.add(images_panel, "cell 0 5");
 		
 		JCheckBox Computation_CheckBox = new JCheckBox("Computation");
@@ -142,17 +142,9 @@ public class testModeUI {
 		});
 		selectMenu_pnl.add(Computation_CheckBox, "cell 0 6");
 		
-		computation_panel = new JPanel();
+		computation_panel = new Computation_panel();
 		computation_panel.setPreferredSize(new Dimension(150, 100));
-		computation_panel.setBackground(Color.WHITE);
 		selectMenu_pnl.add(computation_panel, "cell 0 7");
-		computation_panel.setLayout(new MigLayout("", "[grow]", "[grow][grow]"));
-		
-		computationOriginalImage_panel = new OriginalImage_panel();
-		computation_panel.add(computationOriginalImage_panel, "cell 0 0");
-		
-		computationImages_panel = new Images_panel();
-		computation_panel.add(computationImages_panel, "cell 0 1");
 		
 		JCheckBox Merge_CheckBox = new JCheckBox("Merge");
 		Merge_CheckBox.addChangeListener(new ChangeListener() {

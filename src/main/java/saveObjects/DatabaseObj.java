@@ -29,8 +29,8 @@ public class DatabaseObj {
 		Arrays.sort(fileAndColorArr);
 		filesAndColors = new fileAndColor[fileAndColorArr.length];
 		System.arraycopy(fileAndColorArr, 0, filesAndColors, 0, fileAndColorArr.length);
-		files = new File[filesAndColors.length];
-		colors = new Color[filesAndColors.length];
+		this.files = new File[filesAndColors.length];
+		this.colors = new Color[filesAndColors.length];
 		for(int i=0;i<filesAndColors.length;i++) {
 			files[i] = filesAndColors[i].file;
 			colors[i] = filesAndColors[i].color;
