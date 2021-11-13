@@ -58,7 +58,6 @@ public class MainGUI {
 	BufferedImage originalPicture;
 	FolderSave FolderData = new FolderSave();
 	smartSplitter imageSplitter;
-	JComboBox<?> downrenderSettings_CBox;
 	JProgressBar progressBar;
 	JComboBox<String> RenderQueueComboBox;
 	
@@ -236,7 +235,7 @@ public class MainGUI {
 	        	
 	        	RenderQueue instance = RenderQueue.getInstance();
 	        	
-	        	Renderer render = new Renderer(imageData, FolderData, (int)controlPanel.getMaxRepetition_spnr().getValue(), (Scalr.Method)downrenderSettings_CBox.getSelectedItem());
+	        	Renderer render = new Renderer(imageData, FolderData, (int)controlPanel.getMaxRepetition_spnr().getValue(), (Scalr.Method)controlPanel.getAccuracy_ComboBox().getSelectedItem());
 	        	render.addListener(new ProgressListener() {
 	        		
 	        		@Override
@@ -311,7 +310,7 @@ public class MainGUI {
 			        	FolderData.exportDatabase = selectedFile;
 			        	
 			        	DataBaseManager manager = new DataBaseManager();
-			        	manager.createDataBase(FolderData, (Scalr.Method)downrenderSettings_CBox.getSelectedItem());
+			        	manager.createDataBase(FolderData, (Scalr.Method)controlPanel.getAccuracy_ComboBox().getSelectedItem());
 			        	
 			        	long timer2 = System.currentTimeMillis();
 			        	System.out.println(timer2 - timer1);

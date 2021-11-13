@@ -6,10 +6,13 @@ public class TestConfig {
 	ImagesConfig Images;
 	ComputationConfig Computation;
 	
-	public TestConfig(OriginalImageConfig originalImage, ImagesConfig Images, ComputationConfig Computation) {
+	private Method method;
+	
+	public TestConfig(OriginalImageConfig originalImage, ImagesConfig Images, ComputationConfig Computation, Method method) {
 		this.originalImage = originalImage;
 		this.Images = Images;
 		this.Computation = Computation;
+		this.method = method;
 	}
 
 	public OriginalImageConfig getOriginalImage() {
@@ -22,5 +25,14 @@ public class TestConfig {
 
 	public ComputationConfig getComputation() {
 		return Computation;
+	}
+	
+	public Method getMethod() {
+		return method;
+	}
+
+	public enum Method{
+		DOWNLOAD,
+		GENERATE
 	}
 }

@@ -68,21 +68,25 @@ public class ControlPanel extends JPanel {
 		add(dimensions_lbl, "cell 0 2");
 		
 		dimensionX_spnr = new JSpinner();
+		dimensionX_spnr.setValue(5);
 		add(dimensionX_spnr, "cell 1 2");
 		
 		dimensionY_spnr = new JSpinner();
+		dimensionY_spnr.setValue(5);
 		add(dimensionY_spnr, "cell 2 2");
 		
 		multiplier_lbl = new JLabel("multiplier");
 		add(multiplier_lbl, "cell 0 3");
 		
 		multiplier_spnr = new JSpinner();
+		multiplier_spnr.setValue(1);
 		add(multiplier_spnr, "cell 1 3");
 		
 		maxRepetition_lbl = new JLabel("max. repetition");
 		add(maxRepetition_lbl, "cell 0 4");
 		
 		maxRepetition_spnr = new JSpinner();
+		maxRepetition_spnr.setValue(50);
 		add(maxRepetition_spnr, "cell 1 4");
 		
 		downrenderAccuracy_lbl = new JLabel("accuracy");

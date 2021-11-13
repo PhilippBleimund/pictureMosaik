@@ -33,11 +33,39 @@ public class RenderTest {
 
 	String tmpdir = System.getProperty("java.io.tmpdir");
 
+	File[] globalImages;
+	
 	public void runTest(TestConfig config) {
+		OriginalImageConfig originalImage = config.getOriginalImage();
+		ImagesConfig images = config.getImages();
+		ComputationConfig computation = config.getComputation();
 		
+		if(originalImage != null) {
+			testOriginalImage(originalImage);
+		}
+		if(images != null) {
+			boolean color = images.isColor();
+			boolean databse = images.isDatabse();
+			boolean downrender = images.isDownrender();
+			
+			
+		}
 	}
 	
-	public Color[][] testOriginalImage(OriginalImageConfig config, boolean silent) {		
+	public void changeArray(int size, TestConfig config) {
+		File[] newImages = new File[size];
+		File[] generatedImages;
+		if(size > globalImages.length) {
+			if(config.getMethod() == TestConfig.Method.DOWNLOAD) {
+				
+			}
+		}
+ 		for(int i=0;i<size;i++) {
+			newImages[i] = globalImages[i];
+		}
+	}
+	
+	public long testOriginalImage(OriginalImageConfig config) {		
 		BufferedImage image = new BufferedImage((int) config.getSize().getWidth(), (int) config.getSize().getHeight(),
 				BufferedImage.TYPE_INT_RGB);
 		Graphics2D graphics = image.createGraphics();
@@ -70,14 +98,7 @@ public class RenderTest {
 		long timeColor1 = System.nanoTime();
 		sendMessage("time elapsed: " + (timeColor1 - timeColor0));
 		
-		return averageColorSections;
-	}
-	
-	public void testImages(ImagesConfig config, File[] images, boolean silent) {
-		computeAverageColor colorCalculator = new computeAverageColor();
-		sendMessage("start Test: Images");
-		
-		
+		return timeColor1 - timeColor0;
 	}
 	
 	public long testAverageColor(ImagesConfig config, File[] images) {
