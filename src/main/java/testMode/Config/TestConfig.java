@@ -1,22 +1,19 @@
-package testMode.Panel;
+package testMode.Config;
 
 public class TestConfig {
 
-	OriginalImageConfig originalImage;
 	ImagesConfig Images;
 	ComputationConfig Computation;
 	
 	private Method method;
 	
-	public TestConfig(OriginalImageConfig originalImage, ImagesConfig Images, ComputationConfig Computation, Method method) {
-		this.originalImage = originalImage;
+	private int repeat;
+	
+	public TestConfig(ImagesConfig Images, ComputationConfig Computation, Method method, int repeat) {
 		this.Images = Images;
 		this.Computation = Computation;
 		this.method = method;
-	}
-
-	public OriginalImageConfig getOriginalImage() {
-		return originalImage;
+		this.repeat = repeat;
 	}
 
 	public ImagesConfig getImages() {
@@ -29,6 +26,10 @@ public class TestConfig {
 	
 	public Method getMethod() {
 		return method;
+	}
+	
+	public int getRepeat() {
+		return repeat;
 	}
 
 	public enum Method{

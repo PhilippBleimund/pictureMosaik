@@ -29,7 +29,6 @@ import GUI.SynchronousJFXDirectoryChooser;
 import GUI.SynchronousJFXFileChooser;
 import GUI.WindowManager;
 import ImageSelector.FolderTree.FolderTreeManager;
-import ImageSelector.FolderTree.TreeValue;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.stage.DirectoryChooser;
@@ -175,10 +174,7 @@ public class ImageSelectorUI {
 				DefaultMutableTreeNode lastPathComponent = (DefaultMutableTreeNode)tree.getSelectionPath().getLastPathComponent();
 				DefaultMutableTreeNode childAt = (DefaultMutableTreeNode) lastPathComponent.getChildAt(0);
 				Object userObject = childAt.getUserObject();
-		        if(userObject instanceof TreeValue) {
-		        	TreeValue userObjectCast = (TreeValue)userObject;
-		        	manager.removeFolder(userObjectCast.getURI());
-		        }
+				manager.removeFolder(userObject);
 				updateTree();
 			}
 		});
@@ -250,12 +246,12 @@ public class ImageSelectorUI {
 		            expanded, isLeaf, row, focused);
 		        DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
 		        Object userObject = node.getUserObject();
-		        if(userObject instanceof TreeValue) {
+		        /*if(userObject instanceof TreeValue) {
 		        	TreeValue userObjectCast = (TreeValue)userObject;
 			        if(userObjectCast.getType() == TreeValue.type.DATABASE) {
 			        	setLeafIcon(DatabaseIcon);
 			        }
-		        }
+		        }*/
 		        return c;
 		      }
 		    });

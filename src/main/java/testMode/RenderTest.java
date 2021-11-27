@@ -15,6 +15,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
+import javax.swing.SwingWorker;
 
 import Computation.computeAverageColor;
 import Computation.smartSplitter;
@@ -24,84 +25,71 @@ import PictureAnalyse.compareColor;
 import PictureAnalyse.downrenderFiles;
 import PictureAnalyse.splitObj;
 import saveObjects.DatabaseObj;
-import testMode.Panel.ComputationConfig;
-import testMode.Panel.ImagesConfig;
-import testMode.Panel.OriginalImageConfig;
-import testMode.Panel.TestConfig;
+import testMode.Config.ComputationConfig;
+import testMode.Config.ImagesConfig;
+import testMode.Config.TestConfig;
+import testMode.Config.ImagesConfig.Type;
 
-public class RenderTest {
+public class RenderTest extends Thread{
 
-	String tmpdir = System.getProperty("java.io.tmpdir");
+	String tmpdir = System.getProperty("java.io.tmpdir") + "\\PictureMosaik";
 
-	File[] globalImages;
+	File[] globalImages = new File[0];
 	
-	public void runTest(TestConfig config) {
-		OriginalImageConfig originalImage = config.getOriginalImage();
+	public void run() {
+		try {
+			this.sleep(Long.MAX_VALUE);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public RenderTest() {
+		File dir = new File(tmpdir);
+		dir.mkdir();
+		File[] listFiles = dir.listFiles();
+		for(int i=0;i<listFiles.length;i++) {
+			listFiles[i].delete();
+		}
+	}
+	
+	public synchronized void runTest(TestConfig config) {
 		ImagesConfig images = config.getImages();
 		ComputationConfig computation = config.getComputation();
 		
-		if(originalImage != null) {
-			testOriginalImage(originalImage);
-		}
 		if(images != null) {
-			boolean color = images.isColor();
-			boolean databse = images.isDatabse();
-			boolean downrender = images.isDownrender();
+			Type type = images.getType();
 			
-			
-		}
-	}
-	
-	public void changeArray(int size, TestConfig config) {
-		File[] newImages = new File[size];
-		File[] generatedImages;
-		if(size > globalImages.length) {
-			if(config.getMethod() == TestConfig.Method.DOWNLOAD) {
-				
+			if(type == Type.COLOR) {
+				for(int i=0;i<config.getRepeat();i++) {
+					changeArray(images.getCount() + (i-1 * 10), config);
+					testAverageColor(images, globalImages);
+				}
 			}
 		}
- 		for(int i=0;i<size;i++) {
-			newImages[i] = globalImages[i];
+		run();
+	}
+	
+	private void changeArray(int size, TestConfig config) {
+		File[] newImages = new File[size];
+		if(size > globalImages.length) {
+			if(config.getMethod() == TestConfig.Method.DOWNLOAD) {
+				downloadImages(size - globalImages.length, config.getImages().getSize());
+			}else if(config.getMethod() == TestConfig.Method.GENERATE) {
+				generateImages(size - globalImages.length, config.getImages().getSize());
+			}
+			File tmpDir = new File(tmpdir);
+			newImages = tmpDir.listFiles();
+		}else {
+	 		for(int i=0;i<size;i++) {
+				newImages[i] = globalImages[i];
+			}
 		}
+ 		globalImages = newImages;
 	}
 	
-	public long testOriginalImage(OriginalImageConfig config) {		
-		BufferedImage image = new BufferedImage((int) config.getSize().getWidth(), (int) config.getSize().getHeight(),
-				BufferedImage.TYPE_INT_RGB);
-		Graphics2D graphics = image.createGraphics();
-		Random rnd = new Random();
-		graphics.setPaint(new Color(rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255)));
-		graphics.fillRect(0, 0, image.getWidth(), image.getHeight());
-		sendMessage("prepared Image");
-		
-		sendMessage("start Test");
-		
-		smartSplitter imageSplitter = new smartSplitter();
-		sendMessage("calculate Splits");
-		long timeSplits0 = System.nanoTime();
-		splitObj splitImage = imageSplitter.splitImage(image, config.getSplitsX(), config.getSplitsY(), 1);
-		long timeSplits1 = System.nanoTime();
-		sendMessage("time elapsed: " + (timeSplits1 - timeSplits0));
-		
-		SplitPicture splitter = new SplitPicture();
-		BufferedImage[][] biArr;
-		sendMessage("split Image");
-		long timeImageSplit0 = System.nanoTime();
-		biArr = splitter.SpitPictureAndSave(splitImage);
-		long timeImageSplit1 = System.nanoTime();
-		sendMessage("time elapsed: " + (timeImageSplit1 - timeImageSplit0));
-		
-		computeAverageColor colorCalculator = new computeAverageColor();
-		sendMessage("calculate average Color");
-		long timeColor0 = System.nanoTime();
-		Color[][] averageColorSections = colorCalculator.computeAverageColorSections(biArr);
-		long timeColor1 = System.nanoTime();
-		sendMessage("time elapsed: " + (timeColor1 - timeColor0));
-		
-		return timeColor1 - timeColor0;
-	}
-	
-	public long testAverageColor(ImagesConfig config, File[] images) {
+	private long testAverageColor(ImagesConfig config, File[] images) {
 		computeAverageColor colorCalculator = new computeAverageColor();
 		
 		sendMessage("calculate average Color");
@@ -112,7 +100,7 @@ public class RenderTest {
 		return timeColor1 - timeColor0;
 	}
 	
-	public long testDatabase(ImagesConfig config) {
+	private long testDatabase(ImagesConfig config) {
 		File[] images = new File[config.getCount()];
 		Color[] averageColorFiles = new Color[config.getCount()];
 		Random rnd = new Random();
@@ -128,7 +116,7 @@ public class RenderTest {
 		return timeDatabase1 - timeDatabase0;
 	}
 	
-	public long testDownrender(ImagesConfig config, File[] images) {
+	private long testDownrender(ImagesConfig config, File[] images) {
 		File[][] imagesChoosen = new File[images.length][1];
 		for(int i=0;i<images.length;i++) {
 			imagesChoosen[i][0] = images[i];
@@ -147,7 +135,7 @@ public class RenderTest {
         return timerDownrender1 - timerDownrender0;
 	}
 	
-	public void testComputation(ComputationConfig config, boolean silent) {
+	private void testComputation(ComputationConfig config, boolean silent) {
 		sendMessage("start Test: Computation");
 		
 		Color[][] averageColorSections = new Color[config.getSectionsX()][config.getSectionsY()];
@@ -175,7 +163,7 @@ public class RenderTest {
 		sendMessage("time elapsed: " + (timeComputation1 - timeComputation0));
 	}
 	
-	public void downloadImages(int count, Dimension size) {
+	private void downloadImages(int count, Dimension size) {
 		int cores = Runtime.getRuntime().availableProcessors();
 		ExecutorService pool = Executors.newFixedThreadPool(cores);
 		class Picture implements Runnable {
@@ -190,7 +178,7 @@ public class RenderTest {
 			public void run() {
 				// TODO Auto-generated method stub
 				for (int j = 0; j < 10; j++) {
-					saveImageAsFile("https://picsum.photos/" + size.getWidth() + "/" + size.getHeight(),
+					saveImageAsFile("https://picsum.photos/" + (int)size.getWidth() + "/" + (int)size.getHeight(),
 							i + " " + j + ".jpg");
 					System.out.println(i + " " + j);
 				}
@@ -199,6 +187,7 @@ public class RenderTest {
 			public void saveImageAsFile(String URLpicture, String name) {
 				try (InputStream in = new URL(URLpicture).openStream()) {
 					File tmp = new File(tmpdir + "\\" + name);
+					tmp.deleteOnExit();
 					Files.copy(in, tmp.toPath());
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -216,7 +205,7 @@ public class RenderTest {
 		}
 	}
 
-	public void generateImages(int count, Dimension size) {
+	private void generateImages(int count, Dimension size) {
 		int cores = Runtime.getRuntime().availableProcessors();
 		ExecutorService pool = Executors.newFixedThreadPool(cores);
 		class Picture implements Runnable {
@@ -245,6 +234,7 @@ public class RenderTest {
 			public void saveImageAsFile(BufferedImage image, String name) {
 				try {
 					File tmp = new File(tmpdir + "\\" + name);
+					tmp.deleteOnExit();
 					ImageIO.write(image, ".jpg", tmp);
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -263,6 +253,6 @@ public class RenderTest {
 	}
 	
 	private void sendMessage(String s) {
-			System.out.println(s);
+		System.out.println(s);
 	}
 }

@@ -103,6 +103,7 @@ public class compareColor {
 			return result;
 
 		int insertionPoint = -result - 1;
+
 		if (insertionPoint < 0) {
 			System.out.println("hehe");
 		}
@@ -111,7 +112,7 @@ public class compareColor {
 			System.out.print(Database.filesAndColors.length);
 			insertionPoint = Database.filesAndColors.length - 1;
 		}
-
+		
 		if (insertionPoint > 0) {
 			insertionPoint = (Database.filesAndColors[insertionPoint].color.getRGB() - color.getRGB()) < (color.getRGB()
 					- Database.filesAndColors[insertionPoint - 1].color.getRGB()) ? insertionPoint : insertionPoint - 1;

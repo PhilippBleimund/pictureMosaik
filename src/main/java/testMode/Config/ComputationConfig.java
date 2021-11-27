@@ -1,4 +1,4 @@
-package testMode.Panel;
+package testMode.Config;
 
 public class ComputationConfig {
 

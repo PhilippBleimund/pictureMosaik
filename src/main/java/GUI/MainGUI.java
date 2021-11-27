@@ -1,6 +1,7 @@
 package GUI;
 
 import java.awt.BorderLayout;
+import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,6 +49,7 @@ import javafx.embed.swing.JFXPanel;
 import javafx.stage.FileChooser;
 import saveObjects.DatabaseObj;
 import saveObjects.FolderSave;
+import testMode.testModeUI;
 
 public class MainGUI {
 
@@ -354,7 +356,17 @@ public class MainGUI {
 		JMenuItem Test_Mode_menuButton = new JMenuItem("test Mode");
 		Test_Mode_menuButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						try {
+							testModeUI window = new testModeUI();
+							testModeUI.INSTANCE = window;
+							testModeUI.INSTANCE.frame.setVisible(true);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
 			}
 		});
 		File_menu.add(Test_Mode_menuButton);
