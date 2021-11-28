@@ -27,7 +27,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.imgscalr.Scalr;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.knowm.xchart.QuickChart;
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XChartPanel;
@@ -35,8 +38,11 @@ import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
 import org.knowm.xchart.XYSeries.XYSeriesRenderStyle;
 import org.knowm.xchart.style.Styler;
+import org.knowm.xchart.style.Styler.ChartTheme;
 import org.knowm.xchart.style.Styler.LegendPosition;
 
+import Computation.helper;
+import GUI.SynchronousJFXFileChooser;
 import net.miginfocom.swing.MigLayout;
 import testMode.Config.ComputationConfig;
 import testMode.Config.ImagesConfig;
@@ -45,14 +51,22 @@ import testMode.Config.ImagesConfig.Type;
 
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 import java.awt.event.ActionEvent;
 import PictureAnalyse.calculateAverage.Method;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.stage.FileChooser;
+
 import javax.swing.JTextArea;
 import javax.swing.ListModel;
 import javax.swing.JScrollPane;
@@ -63,6 +77,13 @@ import javax.swing.JPopupMenu;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
@@ -73,11 +94,14 @@ public class testModeUI {
 	private Computation_panel computation_panel;
 	private JTextArea LogAread_TField;
 	private JScrollPane scrollPane;
+	private JSpinner increaseRepeat_spinner;
 	
 	private JPanel activeGraph_pnl;
 	
 	private JList allGraphs_list;
 	private JList selectedGraphs_list;
+	
+	private JPopupMenu popupMenuListItem;
 	
 	public static testModeUI INSTANCE;
 	
@@ -188,12 +212,26 @@ public class testModeUI {
 		selectMenu_pnl.add(computation_panel, "cell 0 6");
 		
 		JSpinner TestRepeat_spinner = new JSpinner();
+		TestRepeat_spinner.setPreferredSize(new Dimension(50, 20));
 		TestRepeat_spinner.setModel(new SpinnerNumberModel(new Integer(1), null, null, new Integer(1)));
 		selectMenu_pnl.add(TestRepeat_spinner, "cell 0 2");
 		
+		JCheckBox startRecord_CBox = new JCheckBox("record Test");
+		selectMenu_pnl.add(startRecord_CBox, "cell 0 15");
+
 		JButton startTest_btn = new JButton("start Test");
 		startTest_btn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				String name = null;
+				if(startRecord_CBox.isSelected()) {
+					String m = JOptionPane.showInputDialog("Enter name");
+					if(m.length() == 0) {
+						Random rnd = new Random();
+						m = "test_" + Integer.toString(rnd.nextInt());
+					}
+					name = m;
+				}
+				
 				ImagesConfig imagesConfig = null;
 				ComputationConfig computationConfig = null;
 				if(Images.isSelected()) {
@@ -202,27 +240,21 @@ public class testModeUI {
 				if(Computation_CheckBox.isSelected()) {
 					computationConfig = computation_panel.getConfiguration();
 				}
-				TestConfig config = new TestConfig(imagesConfig, computationConfig, (testMode.Config.TestConfig.Method) generateDummyImages_ComboBox.getSelectedItem() , (int)TestRepeat_spinner.getValue());
+				TestConfig config = new TestConfig(imagesConfig, computationConfig, (testMode.Config.TestConfig.Method) generateDummyImages_ComboBox.getSelectedItem() , (int)TestRepeat_spinner.getValue(), (int)increaseRepeat_spinner.getValue());
 				TestModeManager instance = TestModeManager.getInstance();
-				instance.submitRequest(config);
+				instance.submitRequest(config, name);
 			}
 		});
-		
-		JButton startRecord_btn = new JButton("start Recording");
-		startRecord_btn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(startRecord_btn.getText().equals("start Recording")) {
-					String m = JOptionPane.showInputDialog("Enter name");
-					TestModeManager.getInstance().startRecording(m);
-					startRecord_btn.setText("stop Recording");
-				}else if(startRecord_btn.getText().equals("stop Recording")) {
-					TestModeManager.getInstance().stopRecording();
-					startRecord_btn.setText("start Recording");
-				}
-			}
-		});
-		selectMenu_pnl.add(startRecord_btn, "flowx,cell 0 15");
 		selectMenu_pnl.add(startTest_btn, "cell 0 15");
+		
+		
+		JLabel increaseRepeat_lbl = new JLabel("increase per repeat");
+		selectMenu_pnl.add(increaseRepeat_lbl, "cell 0 2");
+		
+		increaseRepeat_spinner = new JSpinner();
+		increaseRepeat_spinner.setPreferredSize(new Dimension(50, 20));
+		increaseRepeat_spinner.setModel(new SpinnerNumberModel(new Integer(10), null, null, new Integer(1)));
+		selectMenu_pnl.add(increaseRepeat_spinner, "cell 0 2");
 		
 		JPanel selectGraph_pnl = new JPanel();
 		leftMenu_pnl.add(selectGraph_pnl, "name_2057598540600");
@@ -236,10 +268,87 @@ public class testModeUI {
 		allGraphs_pnl.add(allGraphs_scroll, "cell 0 0,grow");
 				
 		allGraphs_list = new JList();
+		allGraphs_list.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int button = e.getButton();
+				if(SwingUtilities.isRightMouseButton(e)) {
+					System.out.println(allGraphs_list.getSelectedIndex());
+					popupMenuListItem.show(allGraphs_list, e.getX(), e.getY());
+				}
+			}
+		});
 		allGraphs_list.setDragEnabled(true);
 		allGraphs_list.setTransferHandler(new ExportTransferHandler());
 		allGraphs_list.setModel(new DefaultListModel());
 		allGraphs_scroll.setViewportView(allGraphs_list);
+		
+		popupMenuListItem = new JPopupMenu();
+		
+		JMenuItem exportListItem_btn = new JMenuItem("export...");
+		exportListItem_btn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFXPanel dummy = new JFXPanel();
+				File selectedFile = null;
+				
+		        Platform.setImplicitExit(false);
+		        try {
+		            SynchronousJFXFileChooser chooser = new SynchronousJFXFileChooser(() -> {
+		                FileChooser ch = new FileChooser();
+		                ch.setTitle("export");
+		                ch.getExtensionFilters().addAll(
+		                	     new FileChooser.ExtensionFilter("JSON", "*.json")
+		                	    ,new FileChooser.ExtensionFilter("TXT", "*.txt")
+		                	);
+		                return ch;
+		            });
+		            selectedFile = chooser.showSaveDialog();
+		        } finally {
+		        	if(selectedFile != null) {
+		        		JList invoker = (JList) popupMenuListItem.getInvoker();
+						int selectedIndex = invoker.getSelectedIndex();
+						DefaultListModel model = (DefaultListModel) invoker.getModel();
+						JSONObj object = (JSONObj) model.get(selectedIndex);
+						String fileFormat = helper.getFileFormat(selectedFile.getName());
+						String exportString = "";
+						switch(fileFormat) {
+						case "json":
+							exportString = object.toJSONString();
+							break;
+						case "txt":
+							try {
+								double[] values = object.getYValues();
+								for(int i=0;i<values.length;i++) {
+									exportString.concat(Double.toString(values[i]) + "\n");
+								}
+							} catch (Exception e1) {
+								e1.printStackTrace();
+							}
+							break;
+						}
+						try (FileWriter file = new FileWriter(selectedFile)) {
+				            file.write(exportString);
+				        } catch (IOException exception) {
+				        	exception.printStackTrace();
+				        }
+		        	}
+		        }
+			}
+		});
+		popupMenuListItem.add(exportListItem_btn);
+		
+		JMenuItem deleteListItem_btn = new JMenuItem("delete");
+		deleteListItem_btn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JList invoker = (JList) popupMenuListItem.getInvoker();
+				int selectedIndex = invoker.getSelectedIndex();
+				DefaultListModel model = (DefaultListModel) invoker.getModel();
+				JSONObj object = (JSONObj) model.get(selectedIndex);
+				TestModeManager.getInstance().removeTestResult(object);
+				model.remove(selectedIndex);
+			}
+		});
+		popupMenuListItem.add(deleteListItem_btn);
 		
 		JPanel selectedGraphs_pnl = new JPanel();
 		selectGraph_pnl.add(selectedGraphs_pnl, "cell 0 1,grow");
@@ -263,18 +372,21 @@ public class testModeUI {
 					selectedTests[i] = (JSONObj) model.get(i);
 				}
 				ArrayList<double[]> valuesY = new ArrayList<double[]>();
+				ArrayList<double[]> valuesX = new ArrayList<double[]>();
 				for(int i=0;i<selectedTests.length;i++) {
 					JSONObj jsonObj = selectedTests[i];
 					try {
-						double[] values = jsonObj.getValues();
-						valuesY.add(values);
+						double[] YValues = jsonObj.getYValues();
+						valuesY.add(YValues);
+						double[] XValues = jsonObj.getXValues();
+						valuesX.add(XValues);
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
 				}
 				
 				// Create Chart
-				XYChart chart = new XYChartBuilder().title("results").xAxisTitle("iterations").yAxisTitle("time in ns").build();
+				XYChart chart = new XYChartBuilder().title("results").xAxisTitle("iterations").yAxisTitle("time in ns").theme(ChartTheme.GGPlot2).build();
 				chart.getStyler().setLegendPosition(LegendPosition.InsideNE);
 				chart.getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Line);
 				chart.getStyler().setZoomEnabled(true);
@@ -283,14 +395,15 @@ public class testModeUI {
 				chart.getStyler().setZoomSelectionColor(new Color(0,0 , 192, 128));
 				chart.getStyler().setCursorEnabled(true);
 				chart.getStyler().setCursorColor(Color.BLACK);
-				chart.getStyler().setCursorLineWidth(3f);
+				chart.getStyler().setCursorLineWidth(2f);
 				chart.getStyler().setCursorFont(new Font("Verdana", Font.BOLD, 12));
-				chart.getStyler().setCursorFontColor(Color.ORANGE);
-				chart.getStyler().setCursorBackgroundColor(Color.BLUE);
+				chart.getStyler().setCursorFontColor(Color.WHITE);
+				chart.getStyler().setCursorBackgroundColor(Color.LIGHT_GRAY);
 				for(int i=0;i<valuesY.size();i++) {
-					chart.addSeries(selectedTests[i].getName(), valuesY.get(i));
+					chart.addSeries(selectedTests[i].getName(), valuesX.get(i), valuesY.get(i));
 				}
 				JPanel chartPanel = new XChartPanel<XYChart>(chart);
+				activeGraph_pnl.removeAll();
 				activeGraph_pnl.add(chartPanel, BorderLayout.CENTER);
 				activeGraph_pnl.revalidate();
 			}
@@ -322,11 +435,11 @@ public class testModeUI {
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
 		
-		JMenu mnNewMenu = new JMenu("View");
-		menuBar.add(mnNewMenu);
+		JMenu View_Menu = new JMenu("View");
+		menuBar.add(View_Menu);
 		
-		JMenu mnNewMenu_1 = new JMenu("select View");
-		mnNewMenu.add(mnNewMenu_1);
+		JMenu selectView_btn = new JMenu("select View");
+		View_Menu.add(selectView_btn);
 		
 		JMenuItem mntmNewMenuItem = new JMenuItem("test");
 		mntmNewMenuItem.addActionListener(new ActionListener() {
@@ -337,7 +450,7 @@ public class testModeUI {
 				cl2.show(information_pnl, "name_1122568408600");
 			}
 		});
-		mnNewMenu_1.add(mntmNewMenuItem);
+		selectView_btn.add(mntmNewMenuItem);
 		
 		JMenuItem mntmNewMenuItem_1 = new JMenuItem("graph");
 		mntmNewMenuItem_1.addActionListener(new ActionListener() {
@@ -347,6 +460,9 @@ public class testModeUI {
 				CardLayout cl2 = (CardLayout)information_pnl.getLayout();
 				cl2.show(information_pnl, "name_1129874075100");
 				DefaultListModel listModel = (DefaultListModel)allGraphs_list.getModel();
+				listModel.removeAllElements();
+				DefaultListModel model = (DefaultListModel) selectedGraphs_list.getModel();
+				model.removeAllElements();
 				TestModeManager instance2 = TestModeManager.getInstance();
 				JSONObject[] testResults = instance2.getTestResults();
 				for(int i=0;i<testResults.length;i++) {
@@ -354,10 +470,52 @@ public class testModeUI {
 				}
 			}
 		});
-		mnNewMenu_1.add(mntmNewMenuItem_1);
+		selectView_btn.add(mntmNewMenuItem_1);
+		
+		JMenu File_menu = new JMenu("File");
+		menuBar.add(File_menu);
+		
+		JMenuItem importTestResults_btn = new JMenuItem("import...");
+		importTestResults_btn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFXPanel dummy = new JFXPanel();
+				List<File> selectedFiles = null;
+				
+		        Platform.setImplicitExit(false);
+		        try {
+		            SynchronousJFXFileChooser chooser = new SynchronousJFXFileChooser(() -> {
+		                FileChooser ch = new FileChooser();
+		                ch.setTitle("export");
+		                ch.getExtensionFilters().addAll(
+		                	     new FileChooser.ExtensionFilter("JSON", "*.json")
+		                	    ,new FileChooser.ExtensionFilter("TXT", "*.txt")
+		                	);
+		                return ch;
+		            });
+		            selectedFiles = chooser.showOpenMultipleDialog();
+		        } finally {
+		        	if(selectedFiles != null && selectedFiles.size() > 0) {
+		        		for(int i=0;i<selectedFiles.size();i++) {
+		        			try {
+								Reader reader = new FileReader(selectedFiles.get(i));
+								JSONParser parser = new JSONParser();
+								JSONObject jsonObject = (JSONObject) parser.parse(reader);
+								TestModeManager.getInstance().addTestResult(jsonObject);
+							} catch (IOException|ParseException e1) {
+								e1.printStackTrace();
+							}
+		        			
+		        		}
+		        	}
+		        }
+			}
+		});
+		File_menu.add(importTestResults_btn);
 	}
 	
 	public void log(String s, boolean clear) {
+		if(LogAread_TField.getText().length() > 30000) 
+			clear = true;
 		LogAread_TField.setText(LogAread_TField.getText() + "\n" + s);
 		JScrollBar vertical = scrollPane.getVerticalScrollBar();
 		vertical.setValue( vertical.getMaximum() );
@@ -451,12 +609,14 @@ class Computation_panel extends JPanel {
 		OriginalImage_panel.add(OriginalImageX_lbl, "flowx,cell 0 2");
 		
 		originalImageX_spinner = new JSpinner();
+		originalImageX_spinner.setPreferredSize(new Dimension(50, 20));
 		OriginalImage_panel.add(originalImageX_spinner, "cell 0 2");
 		
 		JLabel OriginalImageY_lbl = new JLabel("Y");
 		OriginalImage_panel.add(OriginalImageY_lbl, "cell 0 2");
 		
 		originalImageY_spinner = new JSpinner();
+		originalImageY_spinner.setPreferredSize(new Dimension(50, 20));
 		OriginalImage_panel.add(originalImageY_spinner, "cell 0 2");
 		
 		JPanel Images_panel = new JPanel();
@@ -470,12 +630,14 @@ class Computation_panel extends JPanel {
 		Images_panel.add(ImagesCount_lbl, "flowx,cell 0 1,alignx left,aligny top");
 		
 		imagesCount_spinner = new JSpinner();
+		imagesCount_spinner.setPreferredSize(new Dimension(50, 20));
 		Images_panel.add(imagesCount_spinner, "cell 0 1");
 		
 		JLabel ImagesMaxRepetition_lbl = new JLabel("max Repetition");
 		Images_panel.add(ImagesMaxRepetition_lbl, "flowx,cell 0 2");
 		
 		imagesMaxRepetition_spinner = new JSpinner();
+		imagesMaxRepetition_spinner.setPreferredSize(new Dimension(50, 20));
 		Images_panel.add(imagesMaxRepetition_spinner, "cell 0 2");
 	}
 	
@@ -543,6 +705,7 @@ class Images_panel extends JPanel {
 		add(computationImagesCount_lbl, "flowx,cell 0 3");
 		
 		computationImagesCount_spinner = new JSpinner();
+		computationImagesCount_spinner.setPreferredSize(new Dimension(50, 20));
 		computationImagesCount_spinner.setModel(new SpinnerNumberModel(new Integer(1000), null, null, new Integer(10)));
 		add(computationImagesCount_spinner, "cell 0 3");
 		
@@ -556,12 +719,14 @@ class Images_panel extends JPanel {
 		add(computationImagesSizeX_lbl, "flowx,cell 0 5");
 		
 		computationImagesSizeX_spinner = new JSpinner();
+		computationImagesSizeX_spinner.setPreferredSize(new Dimension(50, 20));
 		add(computationImagesSizeX_spinner, "cell 0 5");
 		
 		JLabel computationImagesSizeY_lbl = new JLabel("X");
 		add(computationImagesSizeY_lbl, "cell 0 5");
 		
 		computationImagesSizeY_spinner = new JSpinner();
+		computationImagesSizeY_spinner.setPreferredSize(new Dimension(50, 20));
 		add(computationImagesSizeY_spinner, "cell 0 5");
 		
 		computationImagesMethod_ComboBox = new JComboBox();
@@ -575,12 +740,14 @@ class Images_panel extends JPanel {
 		add(ImagesNewSizeX_lbl, "flowx,cell 0 8");
 		
 		imagesNewSizeX_spinner = new JSpinner();
+		imagesNewSizeX_spinner.setPreferredSize(new Dimension(50, 20));
 		add(imagesNewSizeX_spinner, "cell 0 8");
 		
 		JLabel ImagesNewSizeY_lbl = new JLabel("Y");
 		add(ImagesNewSizeY_lbl, "cell 0 8,aligny baseline");
 		
 		imagesNewSizeY_spinner = new JSpinner();
+		imagesNewSizeY_spinner.setPreferredSize(new Dimension(50, 20));
 		add(imagesNewSizeY_spinner, "cell 0 8");
 	}
 	

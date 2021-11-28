@@ -69,7 +69,7 @@ public class PrepareImages implements Runnable{
 			
 			File tmpDir = new File(tmpdir);
 			File[] dirImages = tmpDir.listFiles();
-			for(int i=0;i<dirImages.length;i++) {
+			for(int i=0;i<size;i++) {
 				newImages[i] = new FileDimension(dirImages[i], d);
 			}
 		}else {
@@ -145,21 +145,22 @@ public class PrepareImages implements Runnable{
 				for (int j = 0; j < 10; j++) {
 					BufferedImage image = new BufferedImage((int) size.getWidth(), (int) size.getHeight(),
 							BufferedImage.TYPE_INT_RGB);
-					Graphics2D graphics = image.createGraphics();
 					Random rnd = new Random();
+					Graphics2D graphics = image.createGraphics();
 					graphics.setPaint(new Color(rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255)));
 					graphics.fillRect(0, 0, image.getWidth(), image.getHeight());
+					graphics.dispose();
 					saveImageAsFile(image);
 					System.out.println(i + " " + j);
 				}
 			}
-
+			
 			public void saveImageAsFile(BufferedImage image) {
 				try {
 					File tmp = new File(tmpdir);
-					File createTempFile = File.createTempFile("image ", "", tmp);
+					File createTempFile = File.createTempFile("image ", ".jpg", tmp);
 					createTempFile.deleteOnExit();
-					ImageIO.write(image, ".jpg", createTempFile);
+					ImageIO.write(image, "jpg", createTempFile);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

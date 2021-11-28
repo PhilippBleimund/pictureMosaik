@@ -104,12 +104,7 @@ public class compareColor {
 
 		int insertionPoint = -result - 1;
 
-		if (insertionPoint < 0) {
-			System.out.println("hehe");
-		}
-
 		if (insertionPoint >= Database.filesAndColors.length) {
-			System.out.print(Database.filesAndColors.length);
 			insertionPoint = Database.filesAndColors.length - 1;
 		}
 		

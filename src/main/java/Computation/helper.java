@@ -7,6 +7,9 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.apache.commons.math3.analysis.interpolation.LinearInterpolator;
+import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
+
 public class helper {
 
 	public helper() {
@@ -58,28 +61,50 @@ public class helper {
 		long millis = time / 1000000;
 		return formatMillis(millis);
 	}
-	
+
 	static private String formatMillis(long val) {
-	    StringBuilder                       buf=new StringBuilder(20);
-	    String                              sgn="";
+		StringBuilder buf = new StringBuilder(20);
+		String sgn = "";
 
-	    if(val<0) { sgn="-"; val=Math.abs(val); }
+		if (val < 0) {
+			sgn = "-";
+			val = Math.abs(val);
+		}
 
-	    append(buf,sgn,0,(val/3600000)); val%=3600000;
-	    append(buf,":",2,(val/  60000)); val%=  60000;
-	    append(buf,":",2,(val/   1000)); val%=   1000;
-	    append(buf,".",3,(val        ));
-	    return buf.toString();
-	    }
+		append(buf, sgn, 0, (val / 3600000));
+		val %= 3600000;
+		append(buf, ":", 2, (val / 60000));
+		val %= 60000;
+		append(buf, ":", 2, (val / 1000));
+		val %= 1000;
+		append(buf, ".", 3, (val));
+		return buf.toString();
+	}
 
-	/** Append a right-aligned and zero-padded numeric value to a `StringBuilder`. */
+	/**
+	 * Append a right-aligned and zero-padded numeric value to a `StringBuilder`.
+	 */
 	static private void append(StringBuilder tgt, String pfx, int dgt, long val) {
-	    tgt.append(pfx);
-	    if(dgt>1) {
-	        int pad=(dgt-1);
-	        for(long xa=val; xa>9 && pad>0; xa/=10) { pad--;           }
-	        for(int  xa=0;   xa<pad;        xa++  ) { tgt.append('0'); }
-	        }
-	    tgt.append(val);
-	    }
+		tgt.append(pfx);
+		if (dgt > 1) {
+			int pad = (dgt - 1);
+			for (long xa = val; xa > 9 && pad > 0; xa /= 10) {
+				pad--;
+			}
+			for (int xa = 0; xa < pad; xa++) {
+				tgt.append('0');
+			}
+		}
+		tgt.append(val);
+	}
+	
+	public static double[] interpolate(double[] xValues, double[] yValues) {
+		LinearInterpolator inperpolator = new LinearInterpolator();
+		PolynomialSplineFunction interpolate = inperpolator.interpolate(xValues, yValues);
+		double[] linear = new double[xValues.length];
+		for(int i=0;i<xValues.length;i++) {
+			linear[i] = interpolate.value(xValues[i]);
+		}
+		return linear;
+	}
 }
