@@ -111,7 +111,7 @@ public class MainGUI {
 		
         BufferedImage a = null;
         try {
-        	InputStream resourceAsStream = MainGUI.class.getResourceAsStream("startImage.jpg");
+        	InputStream resourceAsStream = MainGUI.class.getResourceAsStream("startImage2.jpg");
             a = ImageIO.read(resourceAsStream);
         } catch (IOException ex) {
         	ex.printStackTrace();
