@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
@@ -110,7 +111,8 @@ public class MainGUI {
 		
         BufferedImage a = null;
         try {
-            a = ImageIO.read(MainGUI.class.getResourceAsStream("Enchanting-Travels-Japan-Tours-Colorful-Autumn-Season-and-Mountain-Fuji-with-morning-fog-and-red-leaves-at-lake-Kawaguchiko-is-one-of-the-best-places-in-Japan.jpg"));
+        	InputStream resourceAsStream = MainGUI.class.getResourceAsStream("startImage.jpg");
+            a = ImageIO.read(resourceAsStream);
         } catch (IOException ex) {
         	ex.printStackTrace();
         }
