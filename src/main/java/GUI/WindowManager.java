@@ -12,6 +12,9 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLightLaf;
+
 import ImageSelector.ImageSelectorUI;
 
 public class WindowManager {
@@ -22,22 +25,12 @@ public class WindowManager {
 	public static MainGUI mainGuiInstance;
 	
 	public static void main(String[] args) {
-		
+		FlatDarkLaf.setup();
 		System.setProperty("sun.java2d.opengl", "true");
 		
 		System.out.println(Runtime.getRuntime().maxMemory());
 		System.out.println(Runtime.getRuntime().totalMemory());
 		System.out.println(Runtime.getRuntime().freeMemory());
-		
-		try {
-			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-				if ("Windows".equals(info.getName())) {
-					UIManager.setLookAndFeel(info.getClassName());
-				}
-				System.out.println(info.getClassName());
-			}
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {}
 		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
