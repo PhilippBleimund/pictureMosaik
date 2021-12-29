@@ -6,6 +6,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import com.google.gson.Gson;
+
 import ImageSelector.FolderTree.TreeValue.type;
 
 public class FolderTreeManager {
@@ -14,6 +16,16 @@ public class FolderTreeManager {
 	
 	public FolderTreeManager() {
 
+	}
+	
+	public Object getTree() {
+		Gson gson = new Gson();
+		FolderTreeNode deepTree = gson.fromJson(gson.toJson(tree), FolderTreeNode.class);
+		return deepTree;
+	}
+	
+	public void setTree(Object oldTree) {
+		this.tree = (FolderTreeNode) oldTree;
 	}
 	
 	/**

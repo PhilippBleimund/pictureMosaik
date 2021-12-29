@@ -23,6 +23,7 @@ import PictureAnalyse.mergeMosaik;
 import PictureAnalyse.splitObj;
 import saveObjects.DatabaseObj;
 import saveObjects.FolderSave;
+import saveObjects.ImageSector;
 import saveObjects.ScaledImages;
 
 
@@ -79,17 +80,19 @@ public class Renderer extends SwingWorker{
         
         biArr = splitter.SpitPictureAndSave(imageData);
         
-        
         computeAverageColor colorCalculator = new computeAverageColor();
         
         notifyListener(Status.AVERAGE_COLOR_PICTURE);
-        Color[][] averageColorSections = colorCalculator.computeAverageColorSections(biArr);
+        ImageSector[][] sections = colorCalculator.prepareSections(biArr);
         
-        if(FolderData.selectedImages != null) {
+        if(FolderData.selectedImages != null && FolderData.selectedImages.length > 0) {
         	notifyListener(Status.AVERAGE_COLOR_FILES);
-        	Color[] averageColorFiles = colorCalculator.computeAverageColorFiles(FolderData.selectedImages, calculateAverage.ScalrToThis(method));
-        	
-        	DatabaseObj Obj = new DatabaseObj(FolderData.selectedImages, averageColorFiles);
+        	ImageSector[] averageColorFiles = colorCalculator.computeAverageColorFiles(FolderData.selectedImages, calculateAverage.ScalrToThis(method));
+        	ArrayList<Color[][]> colorsFiles = new ArrayList<Color[][]>();
+        	for(int i=0;i<averageColorFiles.length;i++) {
+        		colorsFiles.add(averageColorFiles[i].getColors());
+        	}
+        	DatabaseObj Obj = new DatabaseObj(FolderData.selectedImages, colorsFiles);
         	FolderData.selectedDatabasesList.add(Obj);
         }
 		
@@ -99,7 +102,7 @@ public class Renderer extends SwingWorker{
 		
 		notifyListener(Status.COMPUTATION);
 		compareColor compare = new compareColor();
-        File[][] choosen = compare.compare(averageColorSections, DatabaseArray,  maxRepetition);
+        File[][] choosen = compare.compare(sections, DatabaseArray,  maxRepetition);
         
         ScaledImages AllImages;
         

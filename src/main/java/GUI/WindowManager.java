@@ -16,6 +16,7 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 
 import ImageSelector.ImageSelectorUI;
+import testMode.testModeUI;
 
 public class WindowManager {
 
@@ -23,6 +24,7 @@ public class WindowManager {
 	
 	public static ImageSelectorUI selectorInstance;
 	public static MainGUI mainGuiInstance;
+	public static testModeUI testModeInstance;
 	
 	public static void main(String[] args) {
 		FlatDarkLaf.setup();
@@ -36,22 +38,13 @@ public class WindowManager {
 			public void run() {
 				try {
 					selectorInstance = new ImageSelectorUI();
-					selectorInstance.frame.setVisible(true);
+					selectorInstance.frame.setVisible(false);
 					selectorInstance.frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 					WindowListener exitListener = new WindowAdapter() {
 					    @Override
 					    public void windowClosing(WindowEvent e) {
-					    	if(!mainGuiInstance.frame.isVisible()) {
-						        int confirm = JOptionPane.showOptionDialog(
-						             null, "Are You Sure to Close Application?", 
-						             "Exit Confirmation", JOptionPane.YES_NO_OPTION, 
-						             JOptionPane.QUESTION_MESSAGE, null, null, null);
-						        if (confirm == 0) {
-						           System.exit(0);
-						        }
-					    	}else {
-					    		selectorInstance.frame.setVisible(false);
-					    	}
+					    	selectorInstance.setTree(selectorInstance.oldTree);
+					    	selectorInstance.frame.setVisible(false);
 					    }
 					};
 					selectorInstance.frame.addWindowListener(exitListener);
@@ -65,6 +58,7 @@ public class WindowManager {
 			public void run() {
 				try {
 					mainGuiInstance = new MainGUI();
+					mainGuiInstance.frame.setVisible(true);
 					mainGuiInstance.frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 					WindowListener exitListener = new WindowAdapter() {
 					    @Override
@@ -79,6 +73,31 @@ public class WindowManager {
 					    }
 					};
 					mainGuiInstance.frame.addWindowListener(exitListener);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					testModeInstance = new testModeUI();
+					testModeInstance.frame.setVisible(false);
+					testModeInstance.frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+					WindowListener exitListener = new WindowAdapter() {
+					    @Override
+					    public void windowClosing(WindowEvent e) {
+					        int confirm = JOptionPane.showOptionDialog(
+					             null, "Are You Sure to Close Application?", 
+					             "Exit Confirmation", JOptionPane.YES_NO_OPTION, 
+					             JOptionPane.QUESTION_MESSAGE, null, null, null);
+					        if (confirm == 0) {
+					           System.exit(0);
+					    	}
+					    }
+					};
+					testModeInstance.frame.addWindowListener(exitListener);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

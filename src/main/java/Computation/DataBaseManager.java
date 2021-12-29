@@ -17,6 +17,7 @@ import org.json.simple.parser.ParseException;
 import PictureAnalyse.calculateAverage;
 import saveObjects.DatabaseObj;
 import saveObjects.FolderSave;
+import saveObjects.ImageSector;
 
 public class DataBaseManager {
 
@@ -26,7 +27,7 @@ public class DataBaseManager {
 	
 	public void createDataBase(FolderSave FolderData, Scalr.Method method) {
 		computeAverageColor colorCalculator = new computeAverageColor();
-		Color[] averageColorFiles = colorCalculator.computeAverageColorFiles(FolderData.selectedImages, calculateAverage.ScalrToThis(method));
+		ImageSector[] averageColorFiles = colorCalculator.computeAverageColorFiles(FolderData.selectedImages, calculateAverage.ScalrToThis(method));
 		
 		JSONObject obj = new JSONObject();
 		JSONArray Data = new JSONArray();
@@ -36,7 +37,7 @@ public class DataBaseManager {
 			File f = FolderData.selectedImages[i];
 			JSONObject FilePath = new JSONObject();
 			FilePath.put("FilePath", f.getAbsolutePath());
-			JSONObject ColorValue = new JSONObject();
+			JSONObject ColorValues = new JSONObject();
 			ColorValue.put("ColorValue", c.getRGB());
 			
 			JSONArray Image = new JSONArray();

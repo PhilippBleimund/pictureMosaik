@@ -11,6 +11,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import GUI.WindowManager;
 import testMode.Config.ComputationConfig;
 import testMode.Config.ImagesConfig;
 import testMode.Config.TestConfig;
@@ -117,8 +118,7 @@ public class TestModeManager {
 		if (message.equals("clean")) {
 			clean = true;
 		}
-
-		testModeUI.INSTANCE.log(time + message, clean);
+		WindowManager.testModeInstance.log(time + message, clean);
 	}
 
 	public void LogToJSON(String message) {

@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import javax.imageio.ImageIO;
 
 import PictureAnalyse.calculateAverage;
+import saveObjects.ImageSector;
 
 public class computeAverageColor {
 
@@ -21,8 +22,8 @@ public class computeAverageColor {
 		cores = Runtime.getRuntime().availableProcessors();
 		pool = Executors.newFixedThreadPool(cores);
 	}
-	public Color[] computeAverageColorFiles(File[] files, calculateAverage.Method method) {
-		Color[] averageColorFiles = new Color[files.length];;
+	public ImageSector[] computeAverageColorFiles(File[] files, calculateAverage.Method method) {
+		ImageSector[] averageColorFiles = new ImageSector[files.length];;
 		class AverageColorOfFile implements Runnable{
 			
 			int taskNum;
@@ -68,7 +69,7 @@ public class computeAverageColor {
 	            } catch (IOException ex) {
 	            	ex.printStackTrace();
 	            }
-	        	averageColorFiles[taskNum] = pictureAverage.getAverage(b, method);
+	        	averageColorFiles[taskNum] = new ImageSector(b, method);
 			}
 		}
 		for(int i=0;i<files.length;i++) {
@@ -85,7 +86,7 @@ public class computeAverageColor {
     	return averageColorFiles;
 	}
 	
-	public Color[][] computeAverageColorSections(BufferedImage[][] BiArr) {
+	public Color[][] computeAverageColorSections(BufferedImage[][] BiArr, calculateAverage.Method method) {
 		Color[][] averageColorSections = new Color[BiArr.length][BiArr[0].length];
 		class AverageColorOfSegment implements Runnable{
 
@@ -103,7 +104,7 @@ public class computeAverageColor {
 			
 			@Override
 			public void run() {
-				averageColorSections[X][Y] = pictureAverage.getAverage(segmentBi, calculateAverage.Method.ULTRA_QUALITY);
+				averageColorSections[X][Y] = pictureAverage.getAverage(segmentBi, method);
 			}
 		}
 		for(int i=0;i<BiArr.length;i++) {
@@ -120,5 +121,16 @@ public class computeAverageColor {
     	pool = Executors.newFixedThreadPool(cores); 
     	
     	return averageColorSections;
+	}
+	
+	//TODO maybe implement Threads here
+	public ImageSector[][] prepareSections(BufferedImage[][] BiArr){
+		ImageSector[][] sections = new ImageSector[BiArr.length][BiArr[0].length];
+        for(int i=0;i<sections.length;i++) {
+        	for(int j=0;j<sections[0].length;j++) {
+        		sections[i][j] = new ImageSector(BiArr[i][j], calculateAverage.Method.ULTRA_QUALITY);
+        	}
+        }
+        return sections;
 	}
 }

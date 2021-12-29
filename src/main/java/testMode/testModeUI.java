@@ -102,36 +102,6 @@ public class testModeUI {
 	private JList selectedGraphs_list;
 	
 	private JPopupMenu popupMenuListItem;
-	
-	public static testModeUI INSTANCE;
-	
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-				if ("Windows".equals(info.getName())) {
-					UIManager.setLookAndFeel(info.getClassName());
-				}
-			}
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
-			
-		}
-		
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					testModeUI window = new testModeUI();
-					INSTANCE = window;
-					INSTANCE.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the application.

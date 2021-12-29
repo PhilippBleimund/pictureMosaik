@@ -43,6 +43,8 @@ public class ImageSelectorUI {
 	private FolderTreeManager manager;
 	private JTree tree;
 
+	public Object oldTree;
+	
 	/**
 	 * Create the application.
 	 */
@@ -272,6 +274,15 @@ public class ImageSelectorUI {
 		return treeDatabases;
 	}
 
+	public Object getTree() {
+		return manager.getTree();
+	}
+	
+	public void setTree(Object tree) {
+		manager.setTree(tree);
+		updateTree();
+	}
+	
 	enum TreeNoteType {
 		Folder, Image
 	}

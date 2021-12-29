@@ -13,6 +13,7 @@ import org.imgscalr.Scalr.Method;
 import net.miginfocom.swing.MigLayout;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
+import javax.swing.SpinnerNumberModel;
 
 public class ControlPanel extends JPanel {
 
@@ -30,77 +31,71 @@ public class ControlPanel extends JPanel {
 	JLabel maxRepetition_lbl;
 	
 	JLabel downrenderAccuracy_lbl;
+	private JLabel subDimensions_lbl;
+	private JSpinner subDimensionX_spnr;
+	private JSpinner subDimensionY_spnr;
+	
 	/**
 	 * Create the panel.
 	 */
 	public ControlPanel() {
-		setLayout(new MigLayout("", "[::78.00px,grow][::45px,grow][::45]", "[][][][][][][][][][][][][][][]"));
+		setLayout(new MigLayout("", "[::78.00px,grow][::45px,grow][::45]", "[][][][][][][][][][][][][][][][]"));
 		
 		chooseOriginal_btn = new JButton("chose Image");
 		add(chooseOriginal_btn, "cell 0 0");
-		
-		JCheckBox showSettings_CBox = new JCheckBox("show settings");
-		showSettings_CBox.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				boolean selected = showSettings_CBox.isSelected();
-				if(selected) {
-					dimensionX_spnr.setVisible(true);
-					dimensionY_spnr.setVisible(true);
-					multiplier_spnr.setVisible(true);
-					maxRepetition_spnr.setVisible(true);
-					dimensions_lbl.setVisible(true);
-					multiplier_lbl.setVisible(true);
-					maxRepetition_lbl.setVisible(true);
-				}else {
-					dimensionX_spnr.setVisible(false);
-					dimensionY_spnr.setVisible(false);
-					multiplier_spnr.setVisible(false);
-					maxRepetition_spnr.setVisible(false);
-					dimensions_lbl.setVisible(false);
-					multiplier_lbl.setVisible(false);
-					maxRepetition_lbl.setVisible(false);
-				}
-			}
-		});
-		add(showSettings_CBox, "cell 0 1");
 		
 		dimensions_lbl = new JLabel("dimensions");
 		add(dimensions_lbl, "cell 0 2");
 		
 		dimensionX_spnr = new JSpinner();
+		dimensionX_spnr.setModel(new SpinnerNumberModel(5, 1, 999, 1));
 		dimensionX_spnr.setValue(5);
 		add(dimensionX_spnr, "cell 1 2");
 		
 		dimensionY_spnr = new JSpinner();
+		dimensionY_spnr.setModel(new SpinnerNumberModel(5, 1, 999, 1));
 		dimensionY_spnr.setValue(5);
 		add(dimensionY_spnr, "cell 2 2");
 		
+		subDimensions_lbl = new JLabel("sub dimensions");
+		add(subDimensions_lbl, "cell 0 3");
+		
+		subDimensionX_spnr = new JSpinner();
+		subDimensionX_spnr.setModel(new SpinnerNumberModel(3, 1, 10, 1));
+		add(subDimensionX_spnr, "cell 1 3");
+		
+		subDimensionY_spnr = new JSpinner();
+		subDimensionY_spnr.setModel(new SpinnerNumberModel(3, 1, 10, 1));
+		add(subDimensionY_spnr, "cell 2 3");
+		
 		multiplier_lbl = new JLabel("multiplier");
-		add(multiplier_lbl, "cell 0 3");
+		add(multiplier_lbl, "cell 0 4");
 		
 		multiplier_spnr = new JSpinner();
+		multiplier_spnr.setModel(new SpinnerNumberModel(1, 0, 10, 1));
 		multiplier_spnr.setValue(1);
-		add(multiplier_spnr, "cell 1 3");
+		add(multiplier_spnr, "cell 1 4");
 		
 		maxRepetition_lbl = new JLabel("max. repetition");
-		add(maxRepetition_lbl, "cell 0 4");
+		add(maxRepetition_lbl, "cell 0 5");
 		
 		maxRepetition_spnr = new JSpinner();
+		maxRepetition_spnr.setModel(new SpinnerNumberModel(50, 1, 99999, 1));
 		maxRepetition_spnr.setValue(50);
-		add(maxRepetition_spnr, "cell 1 4");
+		add(maxRepetition_spnr, "cell 1 5");
 		
 		downrenderAccuracy_lbl = new JLabel("accuracy");
-		add(downrenderAccuracy_lbl, "cell 0 5,alignx trailing");
+		add(downrenderAccuracy_lbl, "cell 0 6,alignx trailing");
 		
 		accuracy_ComboBox = new JComboBox();
 		accuracy_ComboBox.setModel(new DefaultComboBoxModel(Method.values()));
-		add(accuracy_ComboBox, "cell 1 5 2 1,growx");
+		add(accuracy_ComboBox, "cell 1 6 2 1,growx");
 		
 		render_btn = new JButton("add Render");
-		add(render_btn, "cell 0 13");
+		add(render_btn, "cell 0 14");
 		
 		makeDatabase_btn = new JButton("make Database");
-		add(makeDatabase_btn, "cell 0 14");
+		add(makeDatabase_btn, "cell 0 15");
 
 	}
 	public JButton getChooseOriginal_btn() {
@@ -111,6 +106,12 @@ public class ControlPanel extends JPanel {
 	}
 	public JSpinner getDimensionY_spnr() {
 		return dimensionY_spnr;
+	}
+	public JSpinner getSubDimensionX_spnr() {
+		return subDimensionX_spnr;
+	}
+	public JSpinner getSubDimensionY_spnr() {
+		return subDimensionY_spnr;
 	}
 	public JSpinner getMultiplier_spnr() {
 		return multiplier_spnr;
