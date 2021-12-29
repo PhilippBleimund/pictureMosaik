@@ -110,7 +110,7 @@ public class Renderer extends SwingWorker{
         downrenderFiles downrenderChoosen = new downrenderFiles();
         AllImages = downrenderChoosen.downrenderFilesAndSave(choosen, imageData, method);
         
-        System.out.println("downrender");
+        System.out.println("downrenders");
         
         notifyListener(Status.MERGE_IMAGES);
         mergeMosaik merger = new mergeMosaik();
