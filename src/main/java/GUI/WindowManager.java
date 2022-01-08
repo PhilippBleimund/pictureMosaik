@@ -5,6 +5,8 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.event.WindowAdapter;
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -26,7 +28,24 @@ public class WindowManager {
 	public static MainGUI mainGuiInstance;
 	public static testModeUI testModeInstance;
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException, URISyntaxException {
+		/*String currentPath;
+		currentPath = WindowManager.class
+		          .getProtectionDomain()
+		          .getCodeSource().getLocation()
+		          .toURI().getPath()
+		          .replace('/', File.separator.charAt(0)).substring(1);
+	    if(args.length==0) {
+	    	long maxMemory = Runtime.getRuntime().maxMemory()/1024/1024;
+	    	
+	    	long allocatedMemory      = (Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory());
+			long presumableFreeMemory = Runtime.getRuntime().maxMemory() - allocatedMemory;
+			long presumableFreeMemoryMB = presumableFreeMemory/1024/1024;
+	        Runtime.getRuntime().exec("java -Xmx" + maxMemory + "m -jar "+currentPath+" restart");
+	        return;
+	    }*/
+		
+		
 		FlatDarkLaf.setup();
 		System.setProperty("sun.java2d.opengl", "true");
 		

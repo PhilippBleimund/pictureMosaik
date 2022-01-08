@@ -19,6 +19,7 @@ import javax.swing.SwingWorker;
 
 import Computation.computeAverageColor;
 import Computation.smartSplitter;
+import Manager.customThreadFactory;
 import PictureAnalyse.SplitPicture;
 import PictureAnalyse.calculateAverage;
 import PictureAnalyse.compareColor;
@@ -165,7 +166,7 @@ public class RenderTest extends Thread{
 	
 	private void downloadImages(int count, Dimension size) {
 		int cores = Runtime.getRuntime().availableProcessors();
-		ExecutorService pool = Executors.newFixedThreadPool(cores);
+		ExecutorService pool = Executors.newFixedThreadPool(cores, new customThreadFactory());
 		class Picture implements Runnable {
 
 			int i;

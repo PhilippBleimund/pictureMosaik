@@ -1,31 +1,59 @@
 package Computation;
-
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
 import javax.imageio.ImageIO;
 
+import Listener.ProgressEvent;
+import Listener.ProgressListener;
+import Manager.Renderer;
+import Manager.customThreadFactory;
 import PictureAnalyse.calculateAverage;
-import saveObjects.ImageSector;
 
 public class computeAverageColor {
 
 	private int cores;
 	private ExecutorService pool;
 	
+	private int progress = 0;
+	private List<ProgressListener> Listeners = new ArrayList<ProgressListener>();
+	
 	public computeAverageColor() {
 		cores = Runtime.getRuntime().availableProcessors();
-		pool = Executors.newFixedThreadPool(cores);
+		pool = Executors.newFixedThreadPool(cores, new customThreadFactory());
 	}
-	public ImageSector[] computeAverageColorFiles(File[] files, calculateAverage.Method method) {
-		ImageSector[] averageColorFiles = new ImageSector[files.length];;
+	
+	public void addListener(ProgressListener listener) {
+		Listeners.add(listener);
+	}
+	
+	private void notifyListener(Renderer.Status s) {
+		for(ProgressListener L : Listeners) {
+			L.changeProgressStatus(new ProgressEvent(s, this.progress));
+		}
+	}
+	
+	synchronized private void increaseProgress() {
+		progress++;
+		if(progress % 50 == 0) {
+			notifyListener(Renderer.Status.AVERAGE_COLOR_FILES);
+		}
+	}
+	
+	public Color[] computeAverageColorFiles(File[] files, calculateAverage.Method method) {
+		progress = 0;
+		Color[] averageColorFiles = new Color[files.length];;
+		
+		
 		class AverageColorOfFile implements Runnable{
-			
+
 			int taskNum;
 			File file;
 			
@@ -42,9 +70,9 @@ public class computeAverageColor {
 				
 				long allocatedMemory      = (Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory());
 				long presumableFreeMemory = Runtime.getRuntime().maxMemory() - allocatedMemory;
-				System.out.println(presumableFreeMemory);
 				
-				long filesize = file.length();
+				Dimension d = helper.getDimension(file);
+				long filesize = d.height * d.width * 4;
 				
 				int counter = 0;
 				
@@ -69,7 +97,8 @@ public class computeAverageColor {
 	            } catch (IOException ex) {
 	            	ex.printStackTrace();
 	            }
-	        	averageColorFiles[taskNum] = new ImageSector(b, method);
+	        	averageColorFiles[taskNum] = pictureAverage.getAverage(b, method);
+	        	increaseProgress();
 			}
 		}
 		for(int i=0;i<files.length;i++) {
@@ -82,11 +111,11 @@ public class computeAverageColor {
 			e.printStackTrace();
 		}
     	pool = Executors.newFixedThreadPool(cores);
-    	
+    	notifyListener(Renderer.Status.DONE);
     	return averageColorFiles;
 	}
-	
-	public Color[][] computeAverageColorSections(BufferedImage[][] BiArr, calculateAverage.Method method) {
+
+	public Color[][] computeAverageColorSections(BufferedImage[][] BiArr) {
 		Color[][] averageColorSections = new Color[BiArr.length][BiArr[0].length];
 		class AverageColorOfSegment implements Runnable{
 
@@ -101,10 +130,10 @@ public class computeAverageColor {
 				this.segmentBi = segmentBi;
 				this.pictureAverage = new calculateAverage();
 			}
-			
+
 			@Override
 			public void run() {
-				averageColorSections[X][Y] = pictureAverage.getAverage(segmentBi, method);
+				averageColorSections[X][Y] = pictureAverage.getAverage(segmentBi, calculateAverage.Method.ULTRA_QUALITY);
 			}
 		}
 		for(int i=0;i<BiArr.length;i++) {
@@ -119,18 +148,7 @@ public class computeAverageColor {
 			e.printStackTrace();
 		}
     	pool = Executors.newFixedThreadPool(cores); 
-    	
+
     	return averageColorSections;
-	}
-	
-	//TODO maybe implement Threads here
-	public ImageSector[][] prepareSections(BufferedImage[][] BiArr){
-		ImageSector[][] sections = new ImageSector[BiArr.length][BiArr[0].length];
-        for(int i=0;i<sections.length;i++) {
-        	for(int j=0;j<sections[0].length;j++) {
-        		sections[i][j] = new ImageSector(BiArr[i][j], calculateAverage.Method.ULTRA_QUALITY);
-        	}
-        }
-        return sections;
 	}
 }

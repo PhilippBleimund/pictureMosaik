@@ -11,9 +11,13 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 
+import org.imgscalr.AsyncScalr;
 import org.imgscalr.Scalr;
 
 import com.drew.imaging.ImageMetadataReader;
@@ -34,29 +38,37 @@ public class downrender {
 
 	}
 
-	public void scaleImage(ScaledImages AllImages, Point location, File locationImage, int x, int y,
+	public void scaleImage(ScaledImages AllImages, Point location, File locationImage, Dimension dim,
 			Scalr.Method method) {
 
-		Point p = AllImages.exists(locationImage.getName());
+		Point p = AllImages.exists(locationImage.getAbsolutePath(), dim);
 
 		if (p == null) {
 
+			boolean a = AllImages.Array[location.x][location.y].flag(locationImage.getAbsolutePath(), dim);
+			if(a == false) {
+				p = AllImages.exists(locationImage.getAbsolutePath(), dim);
+				AllImages.Array[location.x][location.y] = AllImages.Array[p.x][p.y];
+				return;
+			}
+			
 			BufferedImage bi = prepareImage(locationImage);
 
-			Dimensions D = getDimension(bi, x, y);
+			Dimensions D = getDimension(bi, (int)dim.getWidth(), (int)dim.getHeight());
 			
 			BufferedImage resize = null;
 
 			resize = Scalr.resize(bi, method, Scalr.Mode.FIT_EXACT, D.width, D.height);
+			AsyncScalr
 
-			BufferedImage croped = cropImage(resize, D, x, y);
+			BufferedImage croped = cropImage(resize, D, (int)dim.getWidth(), (int)dim.getHeight());
 
-			AllImages.Array[location.x][location.y] = new ImageWithName(croped, locationImage.getName());
+			AllImages.Array[location.x][location.y].set(croped);
 		} else {
 			AllImages.Array[location.x][location.y] = AllImages.Array[p.x][p.y];
 		}
 	}
-
+	
 	public BufferedImage cropImage(BufferedImage Image, Dimensions dm, int x, int y) {
 
 		BufferedImage croped = null;
@@ -133,6 +145,10 @@ public class downrender {
 			this.width = width;
 			this.height = height;
 			this.axis = axis;
+		}
+		
+		public Dimension getAdDimenseion() {
+			return new Dimension(this.width, this.height);
 		}
 	}
 
@@ -230,7 +246,7 @@ public class downrender {
 			information = readImageInformation(location);
 			transform = getExifTransformation(information);
 			BufferedImage rotatedImage = transformImage(image, transform);
-			return image;
+			return rotatedImage;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -23,7 +23,6 @@ import PictureAnalyse.mergeMosaik;
 import PictureAnalyse.splitObj;
 import saveObjects.DatabaseObj;
 import saveObjects.FolderSave;
-import saveObjects.ImageSector;
 import saveObjects.ScaledImages;
 
 
@@ -83,16 +82,13 @@ public class Renderer extends SwingWorker{
         computeAverageColor colorCalculator = new computeAverageColor();
         
         notifyListener(Status.AVERAGE_COLOR_PICTURE);
-        ImageSector[][] sections = colorCalculator.prepareSections(biArr);
+        Color[][] averageColorSections = colorCalculator.computeAverageColorSections(biArr);
         
         if(FolderData.selectedImages != null && FolderData.selectedImages.length > 0) {
         	notifyListener(Status.AVERAGE_COLOR_FILES);
-        	ImageSector[] averageColorFiles = colorCalculator.computeAverageColorFiles(FolderData.selectedImages, calculateAverage.ScalrToThis(method));
-        	ArrayList<Color[][]> colorsFiles = new ArrayList<Color[][]>();
-        	for(int i=0;i<averageColorFiles.length;i++) {
-        		colorsFiles.add(averageColorFiles[i].getColors());
-        	}
-        	DatabaseObj Obj = new DatabaseObj(FolderData.selectedImages, colorsFiles);
+        	Color[] averageColorFiles = colorCalculator.computeAverageColorFiles(FolderData.selectedImages, calculateAverage.ScalrToThis(method));
+
+        	DatabaseObj Obj = new DatabaseObj(FolderData.selectedImages, averageColorFiles);
         	FolderData.selectedDatabasesList.add(Obj);
         }
 		
@@ -102,7 +98,7 @@ public class Renderer extends SwingWorker{
 		
 		notifyListener(Status.COMPUTATION);
 		compareColor compare = new compareColor();
-        File[][] choosen = compare.compare(sections, DatabaseArray,  maxRepetition);
+		File[][] choosen = compare.compare(averageColorSections, DatabaseArray,  maxRepetition);
         
         ScaledImages AllImages;
         
@@ -110,7 +106,7 @@ public class Renderer extends SwingWorker{
         downrenderFiles downrenderChoosen = new downrenderFiles();
         AllImages = downrenderChoosen.downrenderFilesAndSave(choosen, imageData, method);
         
-        System.out.println("downrenders");
+        System.out.println("downrender");
         
         notifyListener(Status.MERGE_IMAGES);
         mergeMosaik merger = new mergeMosaik();

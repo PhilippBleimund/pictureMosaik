@@ -17,7 +17,6 @@ import org.json.simple.parser.ParseException;
 import PictureAnalyse.calculateAverage;
 import saveObjects.DatabaseObj;
 import saveObjects.FolderSave;
-import saveObjects.ImageSector;
 
 public class DataBaseManager {
 
@@ -25,26 +24,19 @@ public class DataBaseManager {
 		
 	}
 	
-	public void createDataBase(FolderSave FolderData, Scalr.Method method) {
-		computeAverageColor colorCalculator = new computeAverageColor();
-		ImageSector[] averageColorFiles = colorCalculator.computeAverageColorFiles(FolderData.selectedImages, calculateAverage.ScalrToThis(method));
-		
+	public void createDataBase(Color[] averageColorFiles, FolderSave FolderData) {
+
 		JSONObject obj = new JSONObject();
 		JSONArray Data = new JSONArray();
 		
 		for(int i=0;i<FolderData.selectedImages.length;i++) {
 			Color c = averageColorFiles[i];
 			File f = FolderData.selectedImages[i];
-			JSONObject FilePath = new JSONObject();
-			FilePath.put("FilePath", f.getAbsolutePath());
-			JSONObject ColorValues = new JSONObject();
-			ColorValue.put("ColorValue", c.getRGB());
+			JSONObject Info = new JSONObject();
+			Info.put("FilePath", f.getAbsolutePath());
+			Info.put("ColorValue", c.getRGB());
 			
-			JSONArray Image = new JSONArray();
-			Image.add(FilePath);
-			Image.add(ColorValue);
-			
-			Data.add(Image);
+			Data.add(Info);
 		}
 		
 		obj.put("Data", Data);
@@ -81,14 +73,12 @@ public class DataBaseManager {
 			JSONArray Data = (JSONArray) Database.get("Data");
 			
 			for(Object a : Data) {
-				JSONArray SingleImageData = (JSONArray)a;
-
-				JSONObject FilePath = (JSONObject) SingleImageData.get(0);
-				JSONObject ColorValue = (JSONObject) SingleImageData.get(1);
+				JSONObject A = (JSONObject)a;
+				File FilePath = new File((String) A.get("FilePath"));
+				int ColorValue = ((Long) A.get("ColorValue")).intValue();
 				
-				FilesList.add(new File((String) FilePath.get("FilePath")));
-				long l = (long) ColorValue.get("ColorValue");
-				ColorList.add(new Color((int)l));
+				FilesList.add(FilePath);
+				ColorList.add(new Color(ColorValue));
 			}
 		} catch (IOException | ParseException e) {
 			// TODO Auto-generated catch block

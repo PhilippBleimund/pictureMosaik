@@ -1,6 +1,7 @@
 package GUI;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -27,12 +28,14 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JSpinner;
+import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.imgscalr.Scalr;
 
 import Computation.DataBaseManager;
+import Computation.computeAverageColor;
 import Computation.helper;
 import Computation.smartSplitter;
 import ImageSelector.ImageSelectorUI;
@@ -65,9 +68,6 @@ public class MainGUI {
 	JComboBox<String> RenderQueueComboBox;
 
 	helper helperClass = new helper();
-
-	public int subSplitsX;
-	public int subSplitsY;
 	
 	/**
 	 * Launch the application.
@@ -198,20 +198,6 @@ public class MainGUI {
 				refresh(controlPanel);
 			}
 		});
-		
-		controlPanel.getSubDimensionX_spnr().addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				subSplitsX = (int) controlPanel.getSubDimensionX_spnr().getValue();
-			}
-		});;
-		subSplitsX = (int) controlPanel.getSubDimensionX_spnr().getValue();
-		
-		controlPanel.getSubDimensionY_spnr().addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				subSplitsY = (int) controlPanel.getSubDimensionY_spnr().getValue();
-			}
-		});;
-		subSplitsY = (int) controlPanel.getSubDimensionY_spnr().getValue();
 
 		controlPanel.getMultiplier_spnr();
 
@@ -301,7 +287,7 @@ public class MainGUI {
 					SynchronousJFXFileChooser chooser = new SynchronousJFXFileChooser(() -> {
 						FileChooser ch = new FileChooser();
 						ch.setTitle("Open any file you wish");
-						ch.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("TXT", "*.txt"));
+						ch.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("JSON", "*.json"));
 						return ch;
 					});
 					selectedFile = chooser.showSaveDialog();
@@ -309,16 +295,44 @@ public class MainGUI {
 					chooser.showDialog(ch -> ch.showOpenDialog(null), 1, TimeUnit.NANOSECONDS);
 				} finally {
 					if (selectedFile != null) {
-						long timer1 = System.currentTimeMillis();
+						class makeDatabase extends SwingWorker{
+							
+							@Override
+							protected Object doInBackground() throws Exception {
+								long timer1 = System.currentTimeMillis();
 
+								computeAverageColor colorCalculator = new computeAverageColor();
+								colorCalculator.addListener(new ProgressListener() {
+
+									@Override
+									public void changeProgressStatus(ProgressEvent e) {
+										Status status = e.getStatus();
+										switch (status) {
+										case AVERAGE_COLOR_FILES:
+											//progressBar.setValue((int)((double)e.getAverageProgress() / (double)FolderData.selectedImages.length) * 100);
+											progressBar.setString("Database creation: " + e.getAverageProgress() + "/" + FolderData.selectedImages.length);
+											break;
+										case DONE:
+											progressBar.setValue(0);
+											progressBar.setString(null);
+										}
+									}
+									
+								});
+								
+								Color[] averageColorFiles = colorCalculator.computeAverageColorFiles(FolderData.selectedImages, calculateAverage.ScalrToThis((Scalr.Method) controlPanel.getAccuracy_ComboBox().getSelectedItem()));
+								
+								DataBaseManager manager = new DataBaseManager();
+								manager.createDataBase(averageColorFiles, FolderData);
+
+								long timer2 = System.currentTimeMillis();
+								System.out.println(timer2 - timer1);
+								return null;
+							}
+						}
 						FolderData.exportDatabase = selectedFile;
-
-						DataBaseManager manager = new DataBaseManager();
-						manager.createDataBase(FolderData,
-								(Scalr.Method) controlPanel.getAccuracy_ComboBox().getSelectedItem());
-
-						long timer2 = System.currentTimeMillis();
-						System.out.println(timer2 - timer1);
+						makeDatabase make = new makeDatabase();
+						make.execute();
 					}
 				}
 
@@ -372,6 +386,8 @@ public class MainGUI {
 			}
 		});
 		File_menu.add(Test_Mode_menuButton);
+		
+		refresh(controlPanel);
 	}
 
 	public void refresh(ControlPanel controlPanel) {

@@ -12,14 +12,6 @@ import javax.imageio.ImageIO;
 
 public class SplitPicture {
 	
-	private int cores;
-	private ExecutorService pool;
-	
-	public SplitPicture() {
-		cores = Runtime.getRuntime().availableProcessors();
-		pool = Executors.newFixedThreadPool(cores);
-	}
-	
 	public BufferedImage[][] SpitPictureAndSave(splitObj information) {
 		BufferedImage[][] segmentArr = new BufferedImage[information.valueSectionsX.length][information.valueSectionsY.length];
 		

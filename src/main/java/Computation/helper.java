@@ -1,11 +1,18 @@
 package Computation;
 
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.DirectColorModel;
 import java.awt.image.WritableRaster;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 
 import org.apache.commons.math3.analysis.interpolation.LinearInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
@@ -106,5 +113,23 @@ public class helper {
 			linear[i] = interpolate.value(xValues[i]);
 		}
 		return linear;
+	}
+	
+	public static Dimension getDimension(File F) {
+		try(ImageInputStream in = ImageIO.createImageInputStream(F)){
+		    final Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
+		    if (readers.hasNext()) {
+		        ImageReader reader = readers.next();
+		        try {
+		            reader.setInput(in);
+		            return new Dimension(reader.getWidth(0), reader.getHeight(0));
+		        } finally {
+		            reader.dispose();
+		        }
+		    }
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

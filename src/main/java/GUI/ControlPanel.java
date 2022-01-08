@@ -1,9 +1,13 @@
 package GUI;
 
+import java.awt.Component;
+import java.awt.Dimension;
+
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -31,15 +35,12 @@ public class ControlPanel extends JPanel {
 	JLabel maxRepetition_lbl;
 	
 	JLabel downrenderAccuracy_lbl;
-	private JLabel subDimensions_lbl;
-	private JSpinner subDimensionX_spnr;
-	private JSpinner subDimensionY_spnr;
 	
 	/**
 	 * Create the panel.
 	 */
 	public ControlPanel() {
-		setLayout(new MigLayout("", "[::78.00px,grow][::45px,grow][::45]", "[][][][][][][][][][][][][][][][]"));
+		setLayout(new MigLayout("", "[][][]", "[][][][][][][][][][][][][][][][]"));
 		
 		chooseOriginal_btn = new JButton("chose Image");
 		add(chooseOriginal_btn, "cell 0 0");
@@ -48,48 +49,43 @@ public class ControlPanel extends JPanel {
 		add(dimensions_lbl, "cell 0 2");
 		
 		dimensionX_spnr = new JSpinner();
-		dimensionX_spnr.setModel(new SpinnerNumberModel(5, 1, 999, 1));
+		dimensionX_spnr.setModel(new SpinnerNumberModel(2, 1, 999, 1));
+		dimensionX_spnr.setPreferredSize(new Dimension(50, 25));
 		dimensionX_spnr.setValue(5);
 		add(dimensionX_spnr, "cell 1 2");
 		
 		dimensionY_spnr = new JSpinner();
-		dimensionY_spnr.setModel(new SpinnerNumberModel(5, 1, 999, 1));
+		dimensionY_spnr.setModel(new SpinnerNumberModel(2, 1, 999, 1));
+		dimensionY_spnr.setPreferredSize(new Dimension(50, 25));
 		dimensionY_spnr.setValue(5);
 		add(dimensionY_spnr, "cell 2 2");
 		
-		subDimensions_lbl = new JLabel("sub dimensions");
-		add(subDimensions_lbl, "cell 0 3");
-		
-		subDimensionX_spnr = new JSpinner();
-		subDimensionX_spnr.setModel(new SpinnerNumberModel(3, 1, 10, 1));
-		add(subDimensionX_spnr, "cell 1 3");
-		
-		subDimensionY_spnr = new JSpinner();
-		subDimensionY_spnr.setModel(new SpinnerNumberModel(3, 1, 10, 1));
-		add(subDimensionY_spnr, "cell 2 3");
-		
 		multiplier_lbl = new JLabel("multiplier");
-		add(multiplier_lbl, "cell 0 4");
+		add(multiplier_lbl, "cell 0 3");
 		
 		multiplier_spnr = new JSpinner();
 		multiplier_spnr.setModel(new SpinnerNumberModel(1, 0, 10, 1));
+		multiplier_spnr.setPreferredSize(new Dimension(35, 25));
 		multiplier_spnr.setValue(1);
-		add(multiplier_spnr, "cell 1 4");
+		add(multiplier_spnr, "cell 1 3");
 		
 		maxRepetition_lbl = new JLabel("max. repetition");
-		add(maxRepetition_lbl, "cell 0 5");
+		add(maxRepetition_lbl, "cell 0 4");
 		
 		maxRepetition_spnr = new JSpinner();
-		maxRepetition_spnr.setModel(new SpinnerNumberModel(50, 1, 99999, 1));
+		maxRepetition_spnr.setMaximumSize(new Dimension(70, 25));
+		SpinnerNumberModel model = new SpinnerNumberModel(50, 1, 99999, 1);
+		maxRepetition_spnr.setModel(model);
 		maxRepetition_spnr.setValue(50);
-		add(maxRepetition_spnr, "cell 1 5");
+		add(maxRepetition_spnr, "cell 1 4");
 		
 		downrenderAccuracy_lbl = new JLabel("accuracy");
-		add(downrenderAccuracy_lbl, "cell 0 6,alignx trailing");
+		add(downrenderAccuracy_lbl, "cell 0 5");
 		
 		accuracy_ComboBox = new JComboBox();
+		accuracy_ComboBox.setPreferredSize(new Dimension(80, 25));
 		accuracy_ComboBox.setModel(new DefaultComboBoxModel(Method.values()));
-		add(accuracy_ComboBox, "cell 1 6 2 1,growx");
+		add(accuracy_ComboBox, "cell 1 5 2 1");
 		
 		render_btn = new JButton("add Render");
 		add(render_btn, "cell 0 14");
@@ -106,12 +102,6 @@ public class ControlPanel extends JPanel {
 	}
 	public JSpinner getDimensionY_spnr() {
 		return dimensionY_spnr;
-	}
-	public JSpinner getSubDimensionX_spnr() {
-		return subDimensionX_spnr;
-	}
-	public JSpinner getSubDimensionY_spnr() {
-		return subDimensionY_spnr;
 	}
 	public JSpinner getMultiplier_spnr() {
 		return multiplier_spnr;

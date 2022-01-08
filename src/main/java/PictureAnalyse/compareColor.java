@@ -1,5 +1,4 @@
 package PictureAnalyse;
-
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -14,37 +13,33 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import Manager.customThreadFactory;
 import saveObjects.DatabaseObj;
-import saveObjects.ImageSector;
 import saveObjects.fileAndColor;
 
 public class compareColor {
-
 	int[][][] compabilityArr;
 	compareObj[] compareArr;
-
 	public compareColor() {
 
 	}
 
-	public File[][] compare(ImageSector[][] sectionArr, DatabaseObj[] Databases, int maxTimes) {
+	public File[][] compare(Color[][] colorArr, DatabaseObj[] Databases, int maxTimes) {
 		for (int i = 0; i < Databases.length; i++) {
-			Databases[i].compability = new int[sectionArr.length][sectionArr[0].length];
+			Databases[i].compability = new int[colorArr.length][colorArr[0].length];
 		}
 
 		System.out.println("best Color");
-
 		int cores = Runtime.getRuntime().availableProcessors();
 
-		ExecutorService pool = Executors.newFixedThreadPool(cores);
+		ExecutorService pool = Executors.newFixedThreadPool(cores, new customThreadFactory());
 
-		File[][] choosenImages = new File[sectionArr.length][sectionArr[0].length];
+		File[][] choosenImages = new File[colorArr.length][colorArr[0].length];
 
 		class compareDatabases implements Runnable {
 
 			private int x;
 			private int y;
-
 			public compareDatabases(int x, int y) {
 				this.x = x;
 				this.y = y;
@@ -52,33 +47,32 @@ public class compareColor {
 
 			@Override
 			public void run() {
-				fileAndColor[] compability = new fileAndColor[Databases.length];
-				//Get the best color out of every Database
+				int[] compability = new int[Databases.length];
 				for (int l = 0; l < Databases.length; l++) {
-					int bestColor = getDatabaseBestColor(sectionArr[x][y], Databases[l], maxTimes);
+					int bestColor = getDatabaseBestColor(colorArr[x][y], Databases[l], maxTimes);
 					Databases[l].compability[x][y] = bestColor;
 				}
-				//prepare for the comparison between the databases
 				for (int l = 0; l < Databases.length; l++) {
-					fileAndColor value = Databases[l].filesAndColors[Databases[l].compability[x][y]];
-					compability[l] = value;
+					int value = colorArr[x][y].getRGB()
+							- Databases[l].filesAndColors[Databases[l].compability[x][y]].getColor().getRGB();
+					compability[l] = (value > 0) ? value : -value;
 				}
-				//compare what Database can offer the best
-				fileAndColor smalest = compability[0];
+				int smalest = compability[0];
 				int smalestIndex = 0;
-				for (int l = 1; l < compability.length; l++) {
-					if(smalest.compareTo(compability[l]) == 1) {
+				for (int l = 0; l < compability.length; l++) {
+					if (smalest > compability[l]) {
 						smalest = compability[l];
+						smalestIndex = l;
 					}
 				}
-				choosenImages[x][y] = Databases[smalestIndex].filesAndColors[Databases[smalestIndex].compability[x][y]].file;
+				Databases[smalestIndex].filesAndColors[Databases[smalestIndex].compability[x][y]].increaseTimesUsed();
+				choosenImages[x][y] = Databases[smalestIndex].filesAndColors[Databases[smalestIndex].compability[x][y]].getFile();
 			}
-
 		}
 
 		ArrayList<compareDatabases> ThreadList = new ArrayList<compareDatabases>();
-		for (int i = 0; i < sectionArr.length; i++) {
-			for (int j = 0; j < sectionArr[0].length; j++) {
+		for (int i = 0; i < colorArr.length; i++) {
+			for (int j = 0; j < colorArr[0].length; j++) {
 				ThreadList.add(new compareDatabases(i, j));
 			}
 		}
@@ -92,38 +86,52 @@ public class compareColor {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-
 		System.out.println("best Files");
 		return choosenImages;
 	}
 
 	// static for thread safety
-	public static int getDatabaseBestColor(ImageSector color, DatabaseObj Database, int maxRepetition) {
-		fileAndColor reference = new fileAndColor(new File(""), color.getColors());
+	public static int getDatabaseBestColor(Color color, DatabaseObj Database, int maxRepetition) {
+		fileAndColor reference = new fileAndColor(new File(""), color);
 		int result = Arrays.binarySearch(Database.filesAndColors, reference);
 		if (result >= 0)
 			return result;
-
 		int insertionPoint = -result - 1;
-
 		if (insertionPoint >= Database.filesAndColors.length) {
 			insertionPoint = Database.filesAndColors.length - 1;
 		}
-		
+
 		if (insertionPoint > 0) {
-			insertionPoint = (Database.filesAndColors[insertionPoint].compareTo(Database.filesAndColors[insertionPoint-1]) == -1) 
-					? insertionPoint : insertionPoint - 1;
+			insertionPoint = (Database.filesAndColors[insertionPoint].getColor().getRGB() - color.getRGB()) < (color.getRGB()
+					- Database.filesAndColors[insertionPoint - 1].getColor().getRGB()) ? insertionPoint : insertionPoint - 1;
 		}
 
 		int leftBest = getLeftBestColor(insertionPoint, Database, maxRepetition);
 		int rigthBest = getRigthBestColor(insertionPoint, Database, maxRepetition);
 
-		insertionPoint = (Database.filesAndColors[leftBest].compareTo(Database.filesAndColors[rigthBest]) == 1) ? leftBest : rigthBest;
+		int leftDistance;
+		int rigthDistance;
+		if (leftBest > -1) {
+			leftDistance = color.getRGB() - Database.filesAndColors[leftBest].getColor().getRGB();
+			leftDistance = (leftDistance < 0 ? -leftDistance : leftDistance);
+		} else {
+			leftDistance = Integer.MAX_VALUE;
+			leftBest = insertionPoint;
+		}
+
+		if (rigthBest > -1) {
+			rigthDistance = color.getRGB() - Database.filesAndColors[rigthBest].getColor().getRGB();
+			rigthDistance = (rigthDistance < 0 ? -rigthDistance : rigthDistance);
+		} else {
+			rigthDistance = Integer.MAX_VALUE;
+			rigthBest = insertionPoint;
+		}
+
+		insertionPoint = (leftDistance <= rigthDistance) ? leftBest : rigthBest;
 
 		Database.filesAndColors[insertionPoint].increaseTimesUsed();
 		return insertionPoint;
 	}
-
 	public static int getLeftBestColor(int i, DatabaseObj Database, int maxRepetition) {
 		while (Database.filesAndColors[i].getTimesUsed() >= maxRepetition) {
 			if (i == 0)
@@ -132,7 +140,6 @@ public class compareColor {
 		}
 		return i;
 	}
-
 	public static int getRigthBestColor(int i, DatabaseObj Database, int maxRepetition) {
 		while (Database.filesAndColors[i].getTimesUsed() >= maxRepetition) {
 			if (i == Database.filesAndColors.length - 1)

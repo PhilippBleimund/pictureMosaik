@@ -1,7 +1,7 @@
 package PictureAnalyse;
 
+import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.imgscalr.Scalr;
 
+import Manager.customThreadFactory;
 import saveObjects.ScaledImages;
 
 public class downrenderFiles {
@@ -22,7 +23,7 @@ public class downrenderFiles {
 		
 		int cores = Runtime.getRuntime().availableProcessors();
     	
-		ExecutorService pool = Executors.newFixedThreadPool(cores);
+		ExecutorService pool = Executors.newFixedThreadPool(cores, new customThreadFactory());
 		
 		class renderImageDown implements Runnable{
 
@@ -40,7 +41,7 @@ public class downrenderFiles {
 			
 			@Override
 			public void run() {
-				render.scaleImage(AllImages, new Point(X, Y), image, (imageData.valueSectionsX[X] * imageData.multiplier) +1, (imageData.valueSectionsY[Y] * imageData.multiplier) +1, method);
+				render.scaleImage(AllImages, new Point(X, Y), image, new Dimension((imageData.multipliedValuesSectionsX[X]), (imageData.multipliedValuesSectionsY[Y])), method);
 			}
 		}
 		

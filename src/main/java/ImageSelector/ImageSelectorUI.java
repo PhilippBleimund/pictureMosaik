@@ -142,7 +142,7 @@ public class ImageSelectorUI {
 					SynchronousJFXFileChooser chooser = new SynchronousJFXFileChooser(() -> {
 						FileChooser ch = new FileChooser();
 						ch.setTitle("Open any file you wish");
-						ch.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("TXT", "*.txt"));
+						ch.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("JSON", "*.json"));
 						return ch;
 					});
 					selectedFilesList = chooser.showOpenMultipleDialog();

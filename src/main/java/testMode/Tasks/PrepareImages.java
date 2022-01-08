@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 
+import Manager.customThreadFactory;
 import testMode.FileDimension;
 import testMode.TestModeManager;
 import testMode.Config.TestConfig;
@@ -88,7 +89,7 @@ public class PrepareImages implements Runnable{
 	
 	private void downloadImages(int count, Dimension size) {
 		int cores = Runtime.getRuntime().availableProcessors();
-		ExecutorService pool = Executors.newFixedThreadPool(cores);
+		ExecutorService pool = Executors.newFixedThreadPool(cores, new customThreadFactory());
 		class Picture implements Runnable {
 
 			int i;
@@ -130,7 +131,7 @@ public class PrepareImages implements Runnable{
 
 	private void generateImages(int count, Dimension size) {
 		int cores = Runtime.getRuntime().availableProcessors();
-		ExecutorService pool = Executors.newFixedThreadPool(cores);
+		ExecutorService pool = Executors.newFixedThreadPool(cores, new customThreadFactory());
 		class Picture implements Runnable {
 
 			int i;
