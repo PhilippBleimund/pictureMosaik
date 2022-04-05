@@ -28,23 +28,7 @@ public class WindowManager {
 	public static MainGUI mainGuiInstance;
 	public static testModeUI testModeInstance;
 	
-	public static void main(String[] args) throws IOException, URISyntaxException {
-		/*String currentPath;
-		currentPath = WindowManager.class
-		          .getProtectionDomain()
-		          .getCodeSource().getLocation()
-		          .toURI().getPath()
-		          .replace('/', File.separator.charAt(0)).substring(1);
-	    if(args.length==0) {
-	    	long maxMemory = Runtime.getRuntime().maxMemory()/1024/1024;
-	    	
-	    	long allocatedMemory      = (Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory());
-			long presumableFreeMemory = Runtime.getRuntime().maxMemory() - allocatedMemory;
-			long presumableFreeMemoryMB = presumableFreeMemory/1024/1024;
-	        Runtime.getRuntime().exec("java -Xmx" + maxMemory + "m -jar "+currentPath+" restart");
-	        return;
-	    }*/
-		
+	public static void main(String[] args) throws IOException, URISyntaxException{
 		
 		FlatDarkLaf.setup();
 		System.setProperty("sun.java2d.opengl", "true");
@@ -107,13 +91,7 @@ public class WindowManager {
 					WindowListener exitListener = new WindowAdapter() {
 					    @Override
 					    public void windowClosing(WindowEvent e) {
-					        int confirm = JOptionPane.showOptionDialog(
-					             null, "Are You Sure to Close Application?", 
-					             "Exit Confirmation", JOptionPane.YES_NO_OPTION, 
-					             JOptionPane.QUESTION_MESSAGE, null, null, null);
-					        if (confirm == 0) {
-					           System.exit(0);
-					    	}
+					        testModeInstance.frame.setVisible(false);
 					    }
 					};
 					testModeInstance.frame.addWindowListener(exitListener);

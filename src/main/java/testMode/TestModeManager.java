@@ -1,6 +1,8 @@
 package testMode;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -32,10 +34,13 @@ public class TestModeManager {
 
 	private ArrayList<JSONObj> testResults;
 
+	public int countMore;
+	
 	public TestModeManager() {
 		testResults = new ArrayList<JSONObj>();
 		tasks = new LinkedBlockingQueue<Runnable>();
 		images = new FileDimension[0];
+		deleteOldImages();
 	}
 
 	public void submitRequest(TestConfig config, String name) {
@@ -55,25 +60,47 @@ public class TestModeManager {
 				ImagesConfig imagesConfig = new ImagesConfig(images2.getCount() + (config.getIncrease() * i),
 						images2.getSize(), images2.getNewSize(), images2.getMethod(), images2.getType());
 
-				ImagesTest imagesTest = new ImagesTest(imagesConfig);
+				ImagesTest imagesTest = new ImagesTest(imagesConfig, i);
 				if (images2.getType() == ImagesConfig.Type.COLOR || images2.getType() == ImagesConfig.Type.DOWNRENDER) {
 					PrepareImages prepareImages = new PrepareImages(new TestConfig(imagesConfig, computation,
 							config.getMethod(), config.getRepeat(), config.getIncrease()));
 					request.add(prepareImages);
 				}
 				request.add(imagesTest);
-			} else if (computation != null) {
-				ComputationConfig computationConfig = new ComputationConfig(computation.getSectionsX(),
-						computation.getSectionsY(), computation.getCount() + (config.getIncrease() * i),
-						computation.getMaxUsage());
-				Computation computation2 = new Computation(computationConfig);
-				request.add(computation2);
 			}
 		}
+		
+		if (computation != null) {
+			Computation computation2 = new Computation(config);
+			request.add(computation2);
+		}
+		
 		tasks = request;
 		nextTask();
 	}
+	
+	public void stopAll() {
+		tasks = new LinkedBlockingQueue<Runnable>();
+		activeThread.stop();
+		activeThread = null;
+		activeTestResult = null;
+	}
 
+	private void deleteOldImages() {
+		File dir = new File(PrepareImages.tmpdir);
+		File[] listFiles = dir.listFiles();
+		for(int i=0;i<listFiles.length;i++) {
+			listFiles[i].delete();
+		}
+	}
+	
+	public void createBackupFile() throws IOException {
+		File tmp = new File(PrepareImages.tmpdir+ "\\Backups");
+		File createTempFile = File.createTempFile("Backup ", ".json", tmp);
+		FileWriter file = new FileWriter(createTempFile);
+        file.write(this.activeTestResult.toJSONString());
+	}
+	
 	public void nextTask() {
 		Runnable poll = tasks.poll();
 		if (poll != null) {
@@ -121,11 +148,11 @@ public class TestModeManager {
 		WindowManager.testModeInstance.log(time + message, clean);
 	}
 
-	public void LogToJSON(String message) {
+	public void LogToJSON(String key, String message) {
 		if (activeTestResult != null) {
-			JSONArray array = (JSONArray) activeTestResult.get("values");
+			JSONArray array = (JSONArray) activeTestResult.get(key);
 			array.add(message);
-			activeTestResult.put("values", array);
+			activeTestResult.put(key, array);
 		}
 	}
 
@@ -133,7 +160,8 @@ public class TestModeManager {
 		JSONObj jsonObject = new JSONObj(nameRecording);
 		jsonObject.addTestConfig(confing);
 		jsonObject.put("name", nameRecording);
-		jsonObject.put("values", new JSONArray());
+		jsonObject.put(JSONObj.TimeValuesKey, new JSONArray());
+		jsonObject.put(JSONObj.RamValuesKey, new JSONArray());
 		activeTestResult = jsonObject;
 	}
 

@@ -21,7 +21,7 @@ public class calculateAverage {
 		long redBucket = 0;
 		long greenBucket = 0;
 		long blueBucket = 0;
-		long pixelCount = bitmap.getHeight() * bitmap.getWidth();
+		long pixelCount = (bitmap.getHeight() * bitmap.getWidth()) / increase;
 
 		for (int y = 0; y < bitmap.getHeight(); y+=increase){
 		    for (int x = 0; x < bitmap.getWidth(); x+=increase){

@@ -1,5 +1,6 @@
 package Computation;
 
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -16,9 +17,9 @@ public class smartSplitter {
 	//With splits is refereed to the sections not the actual splits.
 	//The problem of the normal splitting is that it can occur that the splits would have point numbers. However Images can't have half pixels.
 	//My solution is to use the minimal pixel count for the part Images and distribute the leftover pixel to the rest.
-	public splitObj splitImage(BufferedImage bi, int splitsX, int splitsY, int multiplier) {
-		int xBi = bi.getWidth();
-		int yBi = bi.getHeight();
+	public splitObj splitImage(BufferedImage bi, Dimension d, int splitsX, int splitsY, int multiplier) {
+		int xBi = (int) ((bi != null) ? bi.getWidth() : d.getWidth());
+		int yBi = (int) ((bi != null) ? bi.getHeight() : d.getHeight());
 		
 		int numberXSplits = 0;
 		int numberYSplits = 0;
@@ -34,7 +35,11 @@ public class smartSplitter {
 		int[] valuesX = distributeValues(splitsX, numberXSplits, restX);
 		int[] valuesY = distributeValues(splitsY, numberYSplits, restY);
 		
-		return new splitObj(bi, valuesX, valuesY, multiplier, splitObj.Method.VALUE);
+		if(bi != null) {
+			return new splitObj(bi, valuesX, valuesY, multiplier, splitObj.Method.VALUE);
+		}else {
+			return new splitObj(d, valuesX, valuesY, multiplier, splitObj.Method.VALUE);
+		}
 	}
 	
 	public int[] distributeValues(int splits, int numberSplits, int rest) {

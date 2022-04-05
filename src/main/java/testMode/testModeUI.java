@@ -145,8 +145,8 @@ public class testModeUI {
 					images_panel.setMaximumSize(new Dimension(1, 1));
 				}else {
 					images_panel.setVisible(true);
-					images_panel.setMaximumSize(new Dimension(150, 230));
-					images_panel.setPreferredSize(new Dimension(150, 230));
+					images_panel.setMaximumSize(new Dimension(200, 230));
+					images_panel.setPreferredSize(new Dimension(200, 230));
 				}
 			}
 		});
@@ -168,8 +168,8 @@ public class testModeUI {
 					computation_panel.setMaximumSize(new Dimension(1, 1));
 				}else {
 					computation_panel.setVisible(true);
-					computation_panel.setMaximumSize(new Dimension(150, 200));
-					computation_panel.setPreferredSize(new Dimension(150, 200));
+					computation_panel.setMaximumSize(new Dimension(200, 200));
+					computation_panel.setPreferredSize(new Dimension(200, 200));
 				}
 			}
 		});
@@ -178,7 +178,7 @@ public class testModeUI {
 		computation_panel = new Computation_panel();
 		computation_panel.setVisible(false);
 		computation_panel.setMaximumSize(new Dimension(1, 1));
-		computation_panel.setPreferredSize(new Dimension(150, 200));
+		computation_panel.setPreferredSize(new Dimension(200, 200));
 		selectMenu_pnl.add(computation_panel, "cell 0 6");
 		
 		JSpinner TestRepeat_spinner = new JSpinner();
@@ -187,7 +187,7 @@ public class testModeUI {
 		selectMenu_pnl.add(TestRepeat_spinner, "cell 0 2");
 		
 		JCheckBox startRecord_CBox = new JCheckBox("record Test");
-		selectMenu_pnl.add(startRecord_CBox, "cell 0 15");
+		selectMenu_pnl.add(startRecord_CBox, "flowx,cell 0 15");
 
 		JButton startTest_btn = new JButton("start Test");
 		startTest_btn.addActionListener(new ActionListener() {
@@ -225,6 +225,15 @@ public class testModeUI {
 		increaseRepeat_spinner.setPreferredSize(new Dimension(50, 20));
 		increaseRepeat_spinner.setModel(new SpinnerNumberModel(new Integer(10), null, null, new Integer(1)));
 		selectMenu_pnl.add(increaseRepeat_spinner, "cell 0 2");
+		
+		JButton stopTest_btn = new JButton("stop Test");
+		stopTest_btn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				TestModeManager instance = TestModeManager.getInstance();
+				instance.stopAll();
+			}
+		});
+		selectMenu_pnl.add(stopTest_btn, "cell 0 15");
 		
 		JPanel selectGraph_pnl = new JPanel();
 		leftMenu_pnl.add(selectGraph_pnl, "name_2057598540600");
@@ -287,9 +296,12 @@ public class testModeUI {
 							break;
 						case "txt":
 							try {
-								double[] values = object.getYValues();
-								for(int i=0;i<values.length;i++) {
-									exportString.concat(Double.toString(values[i]) + "\n");
+								double[] TimeValues = object.getYValues(JSONObj.TimeValuesKey);
+								double[] RamValues = object.getYValues(JSONObj.RamValuesKey);
+								double[] xValues = object.getXValues();
+								exportString = "x;time;ram";
+								for(int i=0;i<TimeValues.length;i++) {
+									exportString = exportString.concat( Long.toString((long) xValues[i]) + ";" +Long.toString((long) TimeValues[i]) + ";" +Long.toString((long) RamValues[i]) + "\n");
 								}
 							} catch (Exception e1) {
 								e1.printStackTrace();
@@ -341,13 +353,16 @@ public class testModeUI {
 				for(int i=0;i<selectedTests.length;i++) {
 					selectedTests[i] = (JSONObj) model.get(i);
 				}
-				ArrayList<double[]> valuesY = new ArrayList<double[]>();
+				ArrayList<double[]> TimeValuesY = new ArrayList<double[]>();
+				ArrayList<double[]> RamValuesY = new ArrayList<double[]>();
 				ArrayList<double[]> valuesX = new ArrayList<double[]>();
 				for(int i=0;i<selectedTests.length;i++) {
 					JSONObj jsonObj = selectedTests[i];
 					try {
-						double[] YValues = jsonObj.getYValues();
-						valuesY.add(YValues);
+						double[] TimeYValues = jsonObj.getYValues(JSONObj.TimeValuesKey);
+						double[] RamYValues = jsonObj.getYValues(JSONObj.RamValuesKey);
+						TimeValuesY.add(TimeYValues);
+						RamValuesY.add(RamYValues);
 						double[] XValues = jsonObj.getXValues();
 						valuesX.add(XValues);
 					} catch (Exception e1) {
@@ -369,8 +384,11 @@ public class testModeUI {
 				chart.getStyler().setCursorFont(new Font("Verdana", Font.BOLD, 12));
 				chart.getStyler().setCursorFontColor(Color.WHITE);
 				chart.getStyler().setCursorBackgroundColor(Color.LIGHT_GRAY);
-				for(int i=0;i<valuesY.size();i++) {
-					chart.addSeries(selectedTests[i].getName(), valuesX.get(i), valuesY.get(i));
+				for(int i=0;i<TimeValuesY.size();i++) {
+					chart.addSeries(selectedTests[i].getName() + " Time", valuesX.get(i), TimeValuesY.get(i));
+				}
+				for(int i=0;i<RamValuesY.size();i++) {
+					chart.addSeries(selectedTests[i].getName() + " Ram", valuesX.get(i), RamValuesY.get(i));
 				}
 				JPanel chartPanel = new XChartPanel<XYChart>(chart);
 				activeGraph_pnl.removeAll();
@@ -636,7 +654,7 @@ class Images_panel extends JPanel {
 	 * Create the panel.
 	 */
 	public Images_panel() {
-		setLayout(new MigLayout("", "[124.00,grow]", "[][][][][][][][][]"));
+		setLayout(new MigLayout("", "[grow]", "[][][][][][][][][]"));
 		
 		imagesColor_CheckBox = new JCheckBox("average Color");
 		imagesColor_CheckBox.addChangeListener(new ChangeListener() {
@@ -644,6 +662,13 @@ class Images_panel extends JPanel {
 				if(imagesColor_CheckBox.isSelected()) {
 					imagesDatabase_CheckBox.setSelected(false);
 					imagesDownrender_CheckBox.setSelected(false);
+					
+					computationImagesSizeX_spinner.setEnabled(true);
+					computationImagesSizeX_spinner.setEnabled(true);
+					computationImagesSizeY_spinner.setEnabled(true);
+					computationImagesMethod_ComboBox.setEnabled(true);
+					imagesNewSizeY_spinner.setEnabled(false);
+					imagesNewSizeX_spinner.setEnabled(false);
 				}
 			}
 		});
@@ -655,6 +680,13 @@ class Images_panel extends JPanel {
 				if(imagesDatabase_CheckBox.isSelected()) {
 					imagesColor_CheckBox.setSelected(false);
 					imagesDownrender_CheckBox.setSelected(false);
+					
+					computationImagesSizeX_spinner.setEnabled(false);
+					computationImagesSizeX_spinner.setEnabled(false);
+					computationImagesSizeY_spinner.setEnabled(false);
+					computationImagesMethod_ComboBox.setEnabled(false);
+					imagesNewSizeY_spinner.setEnabled(false);
+					imagesNewSizeX_spinner.setEnabled(false);
 				}
 			}
 		});
@@ -666,6 +698,13 @@ class Images_panel extends JPanel {
 				if(imagesDownrender_CheckBox.isSelected()) {
 					imagesColor_CheckBox.setSelected(false);
 					imagesDatabase_CheckBox.setSelected(false);
+					
+					computationImagesSizeX_spinner.setEnabled(true);
+					computationImagesSizeX_spinner.setEnabled(true);
+					computationImagesSizeY_spinner.setEnabled(true);
+					computationImagesMethod_ComboBox.setEnabled(true);
+					imagesNewSizeY_spinner.setEnabled(true);
+					imagesNewSizeX_spinner.setEnabled(true);
 				}
 			}
 		});

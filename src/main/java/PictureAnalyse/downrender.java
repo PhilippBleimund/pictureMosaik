@@ -35,7 +35,7 @@ import saveObjects.ScaledImages;
 public class downrender {
 
 	public downrender() {
-
+		
 	}
 
 	public void scaleImage(ScaledImages AllImages, Point location, File locationImage, Dimension dim,
@@ -59,7 +59,6 @@ public class downrender {
 			BufferedImage resize = null;
 
 			resize = Scalr.resize(bi, method, Scalr.Mode.FIT_EXACT, D.width, D.height);
-			AsyncScalr
 
 			BufferedImage croped = cropImage(resize, D, (int)dim.getWidth(), (int)dim.getHeight());
 

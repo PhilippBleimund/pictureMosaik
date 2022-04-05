@@ -115,8 +115,7 @@ public class MainGUI {
 
 		BufferedImage a = null;
 		try {
-			InputStream resourceAsStream = MainGUI.class.getResourceAsStream("startImage2.jpg");
-			a = ImageIO.read(resourceAsStream);
+			a = ImageIO.read(helper.getImage("startImage2.jpg"));
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
@@ -208,7 +207,7 @@ public class MainGUI {
 		controlPanel.getrender_btn().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				splitObj imageData = imageSplitter.splitImage(helper.deepCopy(originalPicture),
+				splitObj imageData = imageSplitter.splitImage(helper.deepCopy(originalPicture), null,
 						(int) controlPanel.getDimensionX_spnr().getValue(),
 						(int) controlPanel.getDimensionY_spnr().getValue(),
 						(int) controlPanel.getMultiplier_spnr().getValue());
@@ -391,7 +390,7 @@ public class MainGUI {
 	}
 
 	public void refresh(ControlPanel controlPanel) {
-		splitObj paintedLines = imageSplitter.splitImage(helper.deepCopy(originalPicture),
+		splitObj paintedLines = imageSplitter.splitImage(helper.deepCopy(originalPicture), null,
 				(int) controlPanel.getDimensionX_spnr().getValue(),
 				(int) controlPanel.getDimensionY_spnr().getValue(), 1);
 

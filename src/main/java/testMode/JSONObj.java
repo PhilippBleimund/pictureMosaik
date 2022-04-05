@@ -18,7 +18,8 @@ public class JSONObj extends JSONObject{
 	
 	private TestConfig config;
 	
-	public static final String valuesKey = "values";
+	public static final String TimeValuesKey = "TimeValues";
+	public static final String RamValuesKey = "RamValues";
 	
 	public JSONObj(String name) {
 		super();
@@ -37,8 +38,8 @@ public class JSONObj extends JSONObject{
 		this.config = old.config;
 	}
 	
-	public double[] getYValues() throws Exception{
-		JSONArray objectArray = (JSONArray) this.get(valuesKey);
+	public double[] getYValues(String key) throws Exception{
+		JSONArray objectArray = (JSONArray) this.get(key);
 		if(objectArray == null)
 			throw new Exception();
 		double[] values = new double[objectArray.size()];

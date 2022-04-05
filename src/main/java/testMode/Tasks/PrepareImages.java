@@ -29,7 +29,7 @@ public class PrepareImages implements Runnable{
 	int size;
 	TestConfig config;
 	
-	String tmpdir = System.getProperty("java.io.tmpdir") + "\\PictureMosaik";
+	final static public String tmpdir = System.getProperty("java.io.tmpdir") + "\\PictureMosaik";
 	
 	public PrepareImages(TestConfig config) {
 		this.size = config.getImages().getCount();
@@ -82,26 +82,30 @@ public class PrepareImages implements Runnable{
 	}
 	
 	private void deleteOldImages() {
-		for(int i=0;i<download.length;i++) {
-			download[i].getFile().delete();
+		File dir = new File(tmpdir);
+		File[] listFiles = dir.listFiles();
+		for(int i=0;i<listFiles.length;i++) {
+			listFiles[i].delete();
 		}
 	}
 	
 	private void downloadImages(int count, Dimension size) {
 		int cores = Runtime.getRuntime().availableProcessors();
-		ExecutorService pool = Executors.newFixedThreadPool(cores, new customThreadFactory());
+		ExecutorService pool = Executors.newFixedThreadPool((cores > 50 ? cores:cores*2), new customThreadFactory());
 		class Picture implements Runnable {
 
 			int i;
+			int more;
 
-			public Picture(int i) {
+			public Picture(int i, int more) {
 				this.i = i;
+				this.more = more;
 			}
 
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				for (int j = 0; j < 10; j++) {
+				for (int j = 0; j < 10+more; j++) {
 					saveImageAsFile("https://picsum.photos/" + (int)size.getWidth() + "/" + (int)size.getHeight());
 					System.out.println(i + " " + j);
 				}
@@ -119,7 +123,8 @@ public class PrepareImages implements Runnable{
 			}
 		}
 		for (int i = 0; i < count / 10; i++) {
-			pool.execute(new Picture(i));
+			TestModeManager.getInstance().countMore++;
+			pool.execute(new Picture(i, (TestModeManager.getInstance().countMore % 50 == 0) ? 1 : 0));
 		}
 		pool.shutdown();
 		try {

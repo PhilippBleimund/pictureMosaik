@@ -1,5 +1,6 @@
 package PictureAnalyse;
 
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
@@ -26,6 +27,10 @@ public class splitObj {
 	
 	public BufferedImage image;
 	
+	public splitObj(Dimension d, int[] ArrX, int[] ArrY, int multiplier, Method Method) {
+		this.costructObject(d, ArrX, ArrY, multiplier, Method);
+	}
+	
 	/**
 	 * When Method.COORDS is used the upper bound of the picture must be included.
 	 * For example the last coordinate of a 2000x1000 picture is 1500. Then the 2000 must be included as the last index in the array.
@@ -35,7 +40,12 @@ public class splitObj {
 	 * @param Method
 	 */
 	public splitObj(BufferedImage image, int[] ArrX, int[] ArrY, int multiplier, Method Method) {
+		Dimension d = new Dimension(image.getWidth(), image.getHeight());
+		this.costructObject(d, ArrX, ArrY, multiplier, Method);
 		this.image = image;
+	}
+	
+	private void costructObject(Dimension d, int[] ArrX, int[] ArrY, int multiplier, Method Method) {
 		this.multiplier = multiplier;
 		if(Method == Method.VALUE) {
 			this.valueSectionsX = ArrX;
@@ -48,14 +58,14 @@ public class splitObj {
 			this.valueSectionsX = mapCoordsToValues(ArrX);
 			this.valueSectionsY = mapCoordsToValues(ArrY);
 		}
-		this.coordsSplitsBorderX = addBordersToCoords(this.coordsSplitsX, image.getWidth());
-		this.coordsSplitsBorderY = addBordersToCoords(this.coordsSplitsY, image.getHeight());
+		this.coordsSplitsBorderX = addBordersToCoords(this.coordsSplitsX, (int) d.getWidth());
+		this.coordsSplitsBorderY = addBordersToCoords(this.coordsSplitsY, (int) d.getHeight());
 		this.multipliedValuesSectionsX = applyMultiplierToValues(this.valueSectionsX, this.multiplier);
 		this.multipliedValuesSectionsY = applyMultiplierToValues(this.valueSectionsY, this.multiplier);
 		this.multipliedCoordsSectionsX = mapValuesToCoords(this.multipliedValuesSectionsX);
 		this.multipliedCoordsSectionsY = mapValuesToCoords(this.multipliedValuesSectionsY);
-		this.multipliesCoordsSplitsBorderX = addBordersToCoords(this.multipliedCoordsSectionsX, image.getWidth() * multiplier);
-		this.multipliesCoordsSplitsBorderY = addBordersToCoords(this.multipliedCoordsSectionsY, image.getHeight() * multiplier);
+		this.multipliesCoordsSplitsBorderX = addBordersToCoords(this.multipliedCoordsSectionsX, (int) (d.getWidth() * multiplier));
+		this.multipliesCoordsSplitsBorderY = addBordersToCoords(this.multipliedCoordsSectionsY, (int) (d.getHeight() * multiplier));
 	}
 	
 	private int[] applyMultiplierToValues(int[] values, int multiplier) {

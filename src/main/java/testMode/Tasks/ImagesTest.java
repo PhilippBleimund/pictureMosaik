@@ -1,8 +1,10 @@
 package testMode.Tasks;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.Random;
 
 import Computation.computeAverageColor;
@@ -12,6 +14,7 @@ import PictureAnalyse.calculateAverage;
 import PictureAnalyse.downrenderFiles;
 import PictureAnalyse.splitObj;
 import saveObjects.DatabaseObj;
+import testMode.JSONObj;
 import testMode.TestModeManager;
 import testMode.Config.ImagesConfig;
 
@@ -19,19 +22,20 @@ public class ImagesTest implements Runnable{
 
 	ImagesConfig config;
 	File[] images;
+	int TestId;
 	
-	public ImagesTest(ImagesConfig config) {
+	public ImagesTest(ImagesConfig config, int TestId) {
 		this.config = config;
+		this.TestId = TestId;
 	}
 	
 	private long testAverageColor(ImagesConfig config, File[] images) {
 		computeAverageColor colorCalculator = new computeAverageColor();
 		
-		TestModeManager.getInstance().Log("calculate average Color", false);
 		long timeColor0 = System.nanoTime();
 		Color[] averageColorFiles = colorCalculator.computeAverageColorFiles(images, calculateAverage.ScalrToThis(config.getMethod()));
 		long timeColor1 = System.nanoTime();
-		Log(timeColor1 - timeColor0);
+		Log(timeColor1 - timeColor0, 5);
 		return timeColor1 - timeColor0;
 	}
 	
@@ -43,11 +47,10 @@ public class ImagesTest implements Runnable{
 			averageColorFiles[i] = new Color(rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255));
 		}
 		
-		TestModeManager.getInstance().Log("create new Database", false);
 		long timeDatabase0 = System.nanoTime();
 		DatabaseObj Obj = new DatabaseObj(images, averageColorFiles);
 		long timeDatabase1 = System.nanoTime();
-		Log(timeDatabase1 - timeDatabase0);
+		Log(timeDatabase1 - timeDatabase0, 50);
 		return timeDatabase1 - timeDatabase0;
 	}
 	
@@ -58,22 +61,31 @@ public class ImagesTest implements Runnable{
 		}
 		
 		smartSplitter imageSplitter = new smartSplitter();
-		BufferedImage image = new BufferedImage((int)config.getNewSize().getWidth(), (int)config.getNewSize().getHeight(), BufferedImage.TYPE_INT_ARGB);
-		splitObj splitImage = imageSplitter.splitImage(image, images.length, 0, 1);
+		Dimension d = new Dimension((int)config.getNewSize().getWidth()*images.length, (int)config.getNewSize().getHeight());
+		splitObj splitImage = imageSplitter.splitImage(null, d, images.length, 0, 1);
 		
 		downrenderFiles downrenderChoosen = new downrenderFiles();
-		TestModeManager.getInstance().Log("downrender Images", false);
 		long timerDownrender0 = System.nanoTime();
         downrenderChoosen.downrenderFilesAndSave(imagesChoosen, splitImage, config.getMethod());
         long timerDownrender1 = System.nanoTime();
-        Log(timerDownrender1 - timerDownrender0);
+        Log(timerDownrender1 - timerDownrender0, 1);
         return timerDownrender1 - timerDownrender0;
 	}
 
-	private void Log(long time) {
-		TestModeManager.getInstance().Log("time elapsed: " + (time) + "ns", false);
-		TestModeManager.getInstance().Log("time elapsed: " + helper.nanoToString(time), false);
-		TestModeManager.getInstance().LogToJSON(Long.toString(time));
+	private void Log(long time, int threshold) {
+		if(this.TestId % threshold == 0) {
+			TestModeManager.getInstance().Log("Iteration: "+ TestId + " time: " + (time) + "ns", false);
+			TestModeManager.getInstance().Log("Iteration: "+ TestId + " time: " + helper.nanoToString(time), false);
+			TestModeManager.getInstance().Log("", true);
+			TestModeManager.getInstance().Log("-+-+-+-", true);
+			TestModeManager.getInstance().Log("", true);
+		}
+		TestModeManager.getInstance().LogToJSON(JSONObj.TimeValuesKey, Long.toString(time));
+		Runtime runtime = Runtime.getRuntime();
+        long memory = runtime.totalMemory() - runtime.freeMemory();
+        long maxMemory = runtime.maxMemory() - runtime.totalMemory();
+        TestModeManager.getInstance().LogToJSON(JSONObj.RamValuesKey, Long.toString(memory));
+        runtime.gc();
 	}
 	
 	@Override
@@ -92,9 +104,6 @@ public class ImagesTest implements Runnable{
 			break;
 		}
 		
-		TestModeManager.getInstance().Log("", true);
-		TestModeManager.getInstance().Log("-+-+-+-", true);
-		TestModeManager.getInstance().Log("", true);
 		TestModeManager.getInstance().nextTask();
 	}
 }
