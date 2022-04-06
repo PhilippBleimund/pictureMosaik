@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -17,6 +18,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 
+import Computation.helper;
 import ImageSelector.ImageSelectorUI;
 import testMode.testModeUI;
 
@@ -41,6 +43,7 @@ public class WindowManager {
 			public void run() {
 				try {
 					selectorInstance = new ImageSelectorUI();
+					selectorInstance.frame.setIconImage(ImageIO.read(helper.getImage("logo.png")));
 					selectorInstance.frame.setVisible(false);
 					selectorInstance.frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 					WindowListener exitListener = new WindowAdapter() {
@@ -61,6 +64,7 @@ public class WindowManager {
 			public void run() {
 				try {
 					mainGuiInstance = new MainGUI();
+					mainGuiInstance.frame.setIconImage(ImageIO.read(helper.getImage("logo.png")));
 					mainGuiInstance.frame.setVisible(true);
 					mainGuiInstance.frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 					WindowListener exitListener = new WindowAdapter() {
@@ -86,6 +90,7 @@ public class WindowManager {
 			public void run() {
 				try {
 					testModeInstance = new testModeUI();
+					testModeInstance.frame.setIconImage(ImageIO.read(helper.getImage("logo.png")));
 					testModeInstance.frame.setVisible(false);
 					testModeInstance.frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 					WindowListener exitListener = new WindowAdapter() {

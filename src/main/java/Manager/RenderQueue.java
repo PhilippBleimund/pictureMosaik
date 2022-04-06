@@ -2,10 +2,17 @@ package Manager;
 
 import java.awt.image.BufferedImage;
 import java.awt.EventQueue;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 
 import ImageViewer.ImageViewerUI;
 import Listener.ProgressEvent;
@@ -70,9 +77,26 @@ public class RenderQueue {
 						@Override
 						public void run() {
 							ImageViewerUI viewer = new ImageViewerUI(imageData.image, finishedRender);
+
+							WindowListener exitListener = new WindowAdapter() {
+							    @Override
+							    public void windowClosing(WindowEvent e) {
+							        int confirm = JOptionPane.showOptionDialog(
+							             null, "Are You Sure to Close Viewer? You could delete unsaved work!", 
+							             "Exit Confirmation", JOptionPane.YES_NO_OPTION, 
+							             JOptionPane.QUESTION_MESSAGE, null, null, null);
+							        if (confirm == 0) {
+							        	JFrame frame = (JFrame) e.getSource();
+							        	frame.dispose();
+							        	System.gc();
+							    	}
+							    }
+							};
+							viewer.addWindowListener(exitListener);
 					        viewer.setVisible(true);
 						}			        	
 			        });
+					
 					nextRender();
 					notifyListener();
 				}

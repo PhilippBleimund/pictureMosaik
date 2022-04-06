@@ -6,6 +6,9 @@ import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +18,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
@@ -49,53 +53,11 @@ public class ImageViewerUI extends JFrame {
 	
 	private JSlider Tranparency_slider;
 	
-	public static void main(String[] args) {
-		
-		System.setProperty("sun.java2d.opengl", "true");
-		
-		System.out.println(Runtime.getRuntime().maxMemory());
-		System.out.println(Runtime.getRuntime().totalMemory());
-		System.out.println(Runtime.getRuntime().freeMemory());
-		
-		try {
-			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-				if ("Windows".equals(info.getName())) {
-					UIManager.setLookAndFeel(info.getClassName());
-				}
-			}
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
-			
-		}
-		
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					BufferedImage a = null;
-			        try {
-			            a = ImageIO.read(MainGUI.class.getResourceAsStream("Enchanting-Travels-Japan-Tours-Colorful-Autumn-Season-and-Mountain-Fuji-with-morning-fog-and-red-leaves-at-lake-Kawaguchiko-is-one-of-the-best-places-in-Japan.jpg"));
-			        } catch (IOException ex) {
-			        	ex.printStackTrace();
-			        }
-			        BufferedImage b = null;
-			        try {
-			            b = ImageIO.read(new File("C:\\Users\\Philipp Bleimund\\Pictures\\Uplay\\test.png"));
-			        } catch (IOException ex) {
-			        	ex.printStackTrace();
-			        }
-					ImageViewerUI window = new ImageViewerUI(a, b);
-					window.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-	
 	/**
 	 * Create the frame.
 	 */
 	public ImageViewerUI(BufferedImage original, BufferedImage work) {
+		
 		originalPicture = helper.deepCopy(original);
 		workPicture = helper.deepCopy(work);
 		originalPicture = Scalr.resize(originalPicture, Scalr.Method.SPEED, workPicture.getWidth(), workPicture.getHeight(), null);
