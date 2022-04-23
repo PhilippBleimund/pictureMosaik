@@ -85,6 +85,7 @@ public class ControlPanel extends JPanel {
 		accuracy_ComboBox = new JComboBox();
 		accuracy_ComboBox.setPreferredSize(new Dimension(80, 25));
 		accuracy_ComboBox.setModel(new DefaultComboBoxModel(Method.values()));
+		accuracy_ComboBox.getModel().setSelectedItem(Method.ULTRA_QUALITY);
 		add(accuracy_ComboBox, "cell 1 5 2 1");
 		
 		render_btn = new JButton("add Render");
