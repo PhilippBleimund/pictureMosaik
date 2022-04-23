@@ -15,8 +15,9 @@ public class ImageWithName {
 	}
 	
 	public boolean flag(String Name, Dimension dim) {
-		if(this.flaged == true)
+		if(this.flaged == true) {
 			return false;
+		}
 		this.dim = dim;
 		this.Name = Name;
 		this.flaged = true;

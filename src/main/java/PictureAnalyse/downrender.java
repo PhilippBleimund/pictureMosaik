@@ -43,29 +43,30 @@ public class downrender {
 
 		Point p = AllImages.exists(locationImage.getAbsolutePath(), dim);
 
-		if (p == null) {
-
-			boolean a = AllImages.Array[location.x][location.y].flag(locationImage.getAbsolutePath(), dim);
-			if(a == false) {
-				p = AllImages.exists(locationImage.getAbsolutePath(), dim);
-				AllImages.Array[location.x][location.y] = AllImages.Array[p.x][p.y];
-				return;
-			}
-			
-			BufferedImage bi = prepareImage(locationImage);
-
-			Dimensions D = getDimension(bi, (int)dim.getWidth(), (int)dim.getHeight());
-			
-			BufferedImage resize = null;
-
-			resize = Scalr.resize(bi, method, Scalr.Mode.FIT_EXACT, D.width, D.height);
-
-			BufferedImage croped = cropImage(resize, D, (int)dim.getWidth(), (int)dim.getHeight());
-
-			AllImages.Array[location.x][location.y].set(croped);
-		} else {
+		if (p != null) {
 			AllImages.Array[location.x][location.y] = AllImages.Array[p.x][p.y];
+			return;
 		}
+
+		boolean a = AllImages.Array[location.x][location.y].flag(locationImage.getAbsolutePath(), dim);
+		
+		if(a == false) {
+			p = AllImages.exists(locationImage.getAbsolutePath(), dim);
+			AllImages.Array[location.x][location.y] = AllImages.Array[p.x][p.y];
+			return;
+		}
+		
+		BufferedImage bi = prepareImage(locationImage);
+
+		Dimensions D = getDimension(bi, (int)dim.getWidth(), (int)dim.getHeight());
+		
+		BufferedImage resize = null;
+
+		resize = Scalr.resize(bi, method, Scalr.Mode.FIT_EXACT, D.width, D.height);
+
+		BufferedImage croped = cropImage(resize, D, (int)dim.getWidth(), (int)dim.getHeight());
+
+		AllImages.Array[location.x][location.y].set(croped);
 	}
 	
 	public BufferedImage cropImage(BufferedImage Image, Dimensions dm, int x, int y) {

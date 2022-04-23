@@ -51,13 +51,13 @@ public class ControlPanel extends JPanel {
 		dimensionX_spnr = new JSpinner();
 		dimensionX_spnr.setModel(new SpinnerNumberModel(2, 1, 999, 1));
 		dimensionX_spnr.setPreferredSize(new Dimension(50, 25));
-		dimensionX_spnr.setValue(5);
+		dimensionX_spnr.setValue(500);
 		add(dimensionX_spnr, "cell 1 2");
 		
 		dimensionY_spnr = new JSpinner();
 		dimensionY_spnr.setModel(new SpinnerNumberModel(2, 1, 999, 1));
 		dimensionY_spnr.setPreferredSize(new Dimension(50, 25));
-		dimensionY_spnr.setValue(5);
+		dimensionY_spnr.setValue(500);
 		add(dimensionY_spnr, "cell 2 2");
 		
 		multiplier_lbl = new JLabel("multiplier");
