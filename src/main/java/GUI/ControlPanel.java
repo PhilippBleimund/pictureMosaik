@@ -51,13 +51,13 @@ public class ControlPanel extends JPanel {
 		dimensionX_spnr = new JSpinner();
 		dimensionX_spnr.setModel(new SpinnerNumberModel(2, 1, 999, 1));
 		dimensionX_spnr.setPreferredSize(new Dimension(50, 25));
-		dimensionX_spnr.setValue(500);
+		dimensionX_spnr.setValue(300);
 		add(dimensionX_spnr, "cell 1 2");
 		
 		dimensionY_spnr = new JSpinner();
 		dimensionY_spnr.setModel(new SpinnerNumberModel(2, 1, 999, 1));
 		dimensionY_spnr.setPreferredSize(new Dimension(50, 25));
-		dimensionY_spnr.setValue(500);
+		dimensionY_spnr.setValue(300);
 		add(dimensionY_spnr, "cell 2 2");
 		
 		multiplier_lbl = new JLabel("multiplier");
@@ -66,7 +66,7 @@ public class ControlPanel extends JPanel {
 		multiplier_spnr = new JSpinner();
 		multiplier_spnr.setModel(new SpinnerNumberModel(1, 0, 10, 1));
 		multiplier_spnr.setPreferredSize(new Dimension(35, 25));
-		multiplier_spnr.setValue(1);
+		multiplier_spnr.setValue(2);
 		add(multiplier_spnr, "cell 1 3");
 		
 		maxRepetition_lbl = new JLabel("max. repetition");

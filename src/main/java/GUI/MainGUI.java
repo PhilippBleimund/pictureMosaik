@@ -115,7 +115,7 @@ public class MainGUI {
 
 		BufferedImage a = null;
 		try {
-			a = ImageIO.read(helper.getImage("Jaguar.jpg"));
+			a = ImageIO.read(helper.getImage("startImage2.jpg"));
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
