@@ -1,49 +1,50 @@
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\Listener\RenderQueueEvent.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\PictureAnalyse\calculateAverage.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\PictureAnalyse\mergeMosaik.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\saveObjects\ImageWithName.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\Listener\RenderQueueListener.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\GUI\MainGUI.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\testMode\TestModeManager.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\PictureAnalyse\compareObj.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\saveObjects\fileAndColor.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\PictureAnalyse\downrender.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\testMode\FileDimension.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\GUI\SynchronousJFXCaller.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\Computation\helper.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\GUI\SynchronousJFXDirectoryChooser.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\ImageSelector\ImageSelectorUI.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\testMode\Config\ComputationConfig.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\Computation\smartSplitter.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\GUI\MapBild.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\Computation\computeAverageColor.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\testMode\JSONObjSelection.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\ImageViewer\ImageViewerUI.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\saveObjects\DatabaseObj.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\Listener\ProgressEvent.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\ImageSelector\FolderTree\FolderTreeManager.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\GUI\WindowManager.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\GUI\SynchronousJFXFileChooser.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\Manager\RenderQueue.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\testMode\Tasks\ImagesTest.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\saveObjects\FolderSave.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\Computation\DataBaseManager.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\ImageSelector\Treetest.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\ImageViewer\File_panel.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\testMode\JSONObj.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\testMode\Tasks\Computation.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\testMode\Tasks\PrepareImages.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\PictureAnalyse\splitObj.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\Listener\ProgressListener.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\Manager\Renderer.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\PictureAnalyse\compareColor.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\PictureAnalyse\downrenderFiles.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\testMode\Config\ImagesConfig.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\ImageViewer\TransformImage.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\PictureAnalyse\SplitPicture.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\saveObjects\ScaledImages.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\testMode\Config\TestConfig.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\GUI\ControlPanel.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\ImageViewer\Edit_panel.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\Manager\customThreadFactory.java
-C:\Users\Philipp Bleimund\git\repository\PictureMosaik\PictureMosaik2\src\main\java\testMode\testModeUI.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/testMode/testModeUI.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/testMode/Tasks/PrepareImages.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/saveObjects/DatabaseObj.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/Computation/computeAverageColor.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/Computation/helper.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/saveObjects/fileAndColor.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/saveObjects/ScaledImages.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/Listener/RenderQueueEvent.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/testMode/TestModeManager.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/GUI/SynchronousJFXDirectoryChooser.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/GUI/MapBild.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/ImageViewer/File_panel.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/ImageViewer/ImageViewerUI.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/testMode/FileDimension.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/testMode/JSONObjSelection.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/PictureAnalyse/compareObj.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/testMode/Config/TestConfig.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/ImageSelector/Treetest.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/PictureAnalyse/mergeMosaik.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/ImageSelector/FolderTree/FolderTreeManager.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/testMode/Tasks/Computation.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/testMode/Config/ImagesConfig.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/ImageViewer/Edit_panel.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/Manager/RenderQueue.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/PictureAnalyse/downrender.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/GUI/WindowManager.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/GUI/SynchronousJFXCaller.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/ImageSelector/ImageSelectorUI.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/Listener/ProgressEvent.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/GUI/SynchronousJFXFileChooser.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/PictureAnalyse/compareColor.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/PictureAnalyse/splitObj.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/PictureAnalyse/SplitPicture.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/Manager/customThreadFactory.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/saveObjects/FolderSave.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/testMode/Tasks/ImagesTest.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/Listener/ProgressListener.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/PictureAnalyse/downrenderFiles.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/Manager/Renderer.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/GUI/ControlPanel.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/PictureAnalyse/calculateAverage.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/testMode/Config/ComputationConfig.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/Computation/smartSplitter.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/testMode/JSONObj.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/GUI/MainGUI.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/Computation/DataBaseManager.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/config/information.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/saveObjects/ImageWithName.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/Listener/RenderQueueListener.java
+/home/philippbleimund/git/pictureMosaik/src/main/java/ImageViewer/TransformImage.java

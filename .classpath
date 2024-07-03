@@ -6,22 +6,85 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
+	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources">
 		<attributes>
-			<attribute name="test" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
 			<attribute name="optional" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11">
+	<classpathentry kind="var" path="M2_REPO/org/openjfx/javafx-swing/18-ea+1/javafx-swing-18-ea+1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/openjfx/javafx-swing/18-ea+1/javafx-swing-18-ea+1-linux.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/openjfx/javafx-graphics/18-ea+1/javafx-graphics-18-ea+1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/openjfx/javafx-graphics/18-ea+1/javafx-graphics-18-ea+1-linux.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/openjfx/javafx-base/18-ea+1/javafx-base-18-ea+1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/openjfx/javafx-base/18-ea+1/javafx-base-18-ea+1-linux.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/openjfx/javafx-media/18-ea+1/javafx-media-18-ea+1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/openjfx/javafx-media/18-ea+1/javafx-media-18-ea+1-linux.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/openjfx/javafx-fxml/18-ea+1/javafx-fxml-18-ea+1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/openjfx/javafx-fxml/18-ea+1/javafx-fxml-18-ea+1-linux.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/openjfx/javafx-controls/18-ea+1/javafx-controls-18-ea+1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/openjfx/javafx-controls/18-ea+1/javafx-controls-18-ea+1-linux.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/googlecode/json-simple/json-simple/1.1.1/json-simple-1.1.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/junit/junit/4.10/junit-4.10.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/imgscalr/imgscalr-lib/4.2/imgscalr-lib-4.2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/drewnoakes/metadata-extractor/2.16.0/metadata-extractor-2.16.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/adobe/xmp/xmpcore/6.1.11/xmpcore-6.1.11.jar"/>
+	<classpathentry kind="var" path="M2_REPO/clojure-interop/java.awt/1.0.2/java.awt-1.0.2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/clojure/clojure/1.8.0/clojure-1.8.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/swinglabs/swingx/swingx-all/1.6.5-1/swingx-all-1.6.5-1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/knowm/xchart/xchart/3.8.1/xchart-3.8.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/de/erichseifert/vectorgraphics2d/VectorGraphics2D/0.13/VectorGraphics2D-0.13.jar"/>
+	<classpathentry kind="var" path="M2_REPO/de/rototor/pdfbox/graphics2d/0.32/graphics2d-0.32.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/pdfbox/pdfbox/2.0.24/pdfbox-2.0.24.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/pdfbox/fontbox/2.0.24/fontbox-2.0.24.jar"/>
+	<classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.2/commons-logging-1.2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/madgag/animated-gif-lib/1.4/animated-gif-lib-1.4.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/miglayout/miglayout/3.7.4/miglayout-3.7.4.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-math3/3.6.1/commons-math3-3.6.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/google/code/gson/gson/2.8.5/gson-2.8.5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/formdev/flatlaf/1.6.4/flatlaf-1.6.4.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/csveed/csveed/0.7.2/csveed-0.7.2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/2.0.0-alpha5/slf4j-api-2.0.0-alpha5.jar"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
 		<attributes>
-			<attribute name="module" value="true"/>
+			<attribute name="optional" value="true"/>
 			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry excluding="**" kind="src" output="target/test-classes" path="src/test/resources">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="test" value="true"/>
+			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path="target/generated-sources/annotations">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="ignore_optional_problems" value="true"/>
+			<attribute name="m2e-apt" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="target/test-classes" path="target/generated-test-sources/test-annotations">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="ignore_optional_problems" value="true"/>
+			<attribute name="m2e-apt" value="true"/>
+			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
